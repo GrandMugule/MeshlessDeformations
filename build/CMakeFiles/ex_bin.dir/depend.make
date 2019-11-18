@@ -267,6 +267,7 @@ CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/IN
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../external/eigen/Eigen/src/plugins/MatrixCwiseUnaryOps.h
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/EPS.cpp
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/EPS.h
+CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/Hit.h
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/IndexComparison.h
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/LinSpaced.h
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/PI.h
@@ -361,6 +362,9 @@ CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/IN
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/quat_mult.h
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/quat_to_mat.cpp
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/quat_to_mat.h
+CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/ray_mesh_intersect.cpp
+CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/ray_mesh_intersect.h
+CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/raytri.c
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/readOBJ.cpp
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/readOBJ.h
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/readOFF.cpp
@@ -386,6 +390,10 @@ CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/IN
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/two_axis_valuator_fixed_up.h
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/unproject.cpp
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/unproject.h
+CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/unproject_onto_mesh.cpp
+CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/unproject_onto_mesh.h
+CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/unproject_ray.cpp
+CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/unproject_ray.h
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/verbose.h
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/writeOBJ.cpp
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/writeOBJ.h

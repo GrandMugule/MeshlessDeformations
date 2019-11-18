@@ -268,6 +268,7 @@ CMakeFiles/ex_bin.dir/main.cpp.o
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../external/eigen/Eigen/src/plugins/MatrixCwiseUnaryOps.h
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/EPS.cpp
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/EPS.h
+ /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/Hit.h
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/IndexComparison.h
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/LinSpaced.h
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/PI.h
@@ -362,6 +363,9 @@ CMakeFiles/ex_bin.dir/main.cpp.o
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/quat_mult.h
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/quat_to_mat.cpp
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/quat_to_mat.h
+ /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/ray_mesh_intersect.cpp
+ /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/ray_mesh_intersect.h
+ /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/raytri.c
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/readOBJ.cpp
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/readOBJ.h
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/readOFF.cpp
@@ -387,6 +391,10 @@ CMakeFiles/ex_bin.dir/main.cpp.o
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/two_axis_valuator_fixed_up.h
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/unproject.cpp
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/unproject.h
+ /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/unproject_onto_mesh.cpp
+ /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/unproject_onto_mesh.h
+ /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/unproject_ray.cpp
+ /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/unproject_ray.h
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/verbose.h
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/writeOBJ.cpp
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../include/igl/writeOBJ.h
