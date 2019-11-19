@@ -21,31 +21,40 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 		std::cout << "modification axe : " << key << " " << (unsigned int)key << std::endl;
 		return true;
 	}
-	if (key == 'X') {
+	if (key == 'Y') {
 		axe = 1;
 		std::cout << "modification axe : " << key << " " << (unsigned int)key << std::endl;
 		return true;
 	}
-	if (key == 'X') {
+	if (key == 'Z') {
 		axe = 2;
 		std::cout << "modification axe : " << key << " " << (unsigned int)key << std::endl;
-		
 		return true;
 	}
-	if (key == 'S') {
-		X(currentVertex, axe) += 1;
-		std::cout << "offset : " << 10 << " " << (unsigned int)key << std::endl;
+	if ((unsigned int)key == 6 || (unsigned int)key == 7) { //6 : touche fleche de droite, 7 : touche fleche de gauche
+		MatrixXd Oldpoint = G.row(currentVertex);
+		MatrixXd Newpoint = X.row(currentVertex);
+		if ((unsigned int)key == 6) { //fleche de droite
+			X(currentVertex, axe) += 0.1;
+			std::cout << "offset : " << 0.1 << " " << std::endl;
+		}
+		else {
+			X(currentVertex, axe) -= 0.1;
+			std::cout << "offset : " << -0.1 << " " << std::endl;
+		}
 		viewer.data().clear();
-		viewer.data().set_mesh(X, F);
+		viewer.data().add_points(Newpoint, RowVector3d(0, 1, 0));
+		viewer.data().add_points(Oldpoint, RowVector3d(1, 0, 0));
+		viewer.data().add_edges(Oldpoint, Newpoint, Eigen::RowVector3d(0, 0, 1));
+		viewer.data().set_mesh(G, F);
 		return true;
 	}
-	if (key == 'Q') {
-		X(currentVertex, axe) -= 1;
-		std::cout << "offset : " << -10 << " " << (unsigned int)key << std::endl;
-		viewer.data().clear();
-		viewer.data().set_mesh(X, F);
+	if ((unsigned int)key == 32) { //touche espace
+		//update la forme de G
+		//update(X0,X,G)
 		return true;
 	}
+
 
 
     return false;
@@ -60,12 +69,14 @@ bool mouse_down(igl::opengl::glfw::Viewer& viewer, int button, int modifier) {
     double x = viewer.current_mouse_x;
     double y = viewer.core().viewport(3) - viewer.current_mouse_y;
     Vector2f mouse_position(x, y);
-    if (igl::unproject_onto_mesh(mouse_position, viewer.core().view, viewer.core().proj, viewer.core().viewport, X, F, fid, bc)) {
+    if (igl::unproject_onto_mesh(mouse_position, viewer.core().view, viewer.core().proj, viewer.core().viewport, G, F, fid, bc)) {
+		//update la forme de G si on touche un nouveau point
+		// update(X0,X,G);
         int bcid;
         bc.maxCoeff(&bcid);
         vid = F(fid, bcid);
         MatrixXd P(1, 3);
-        P.row(0) = X.row(vid);
+        P.row(0) = G.row(vid);
 		currentVertex = vid;
         viewer.data().add_points(P, RowVector3d(1, 0, 0));
         return true;
@@ -93,7 +104,7 @@ int main(int argc, char *argv[]) {
     igl::opengl::glfw::Viewer viewer; // create the 3d viewer
     viewer.callback_key_down = &key_down; // for dealing with keyboard events
     viewer.callback_mouse_down = &mouse_down;
-    viewer.data().set_mesh(X, F); // load a face-based representation of the input 3d shape
+    viewer.data().set_mesh(G, F); // load a face-based representation of the input 3d shape
     viewer.data().set_colors(C);
     viewer.launch(); // run the editor
 }
