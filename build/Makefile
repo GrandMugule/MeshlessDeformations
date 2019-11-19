@@ -176,6 +176,33 @@ main.cpp.s:
 	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+shapematching.o: shapematching.cpp.o
+
+.PHONY : shapematching.o
+
+# target to build an object file
+shapematching.cpp.o:
+	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/shapematching.cpp.o
+.PHONY : shapematching.cpp.o
+
+shapematching.i: shapematching.cpp.i
+
+.PHONY : shapematching.i
+
+# target to preprocess a source file
+shapematching.cpp.i:
+	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/shapematching.cpp.i
+.PHONY : shapematching.cpp.i
+
+shapematching.s: shapematching.cpp.s
+
+.PHONY : shapematching.s
+
+# target to generate assembly for a file
+shapematching.cpp.s:
+	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/shapematching.cpp.s
+.PHONY : shapematching.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -190,6 +217,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... shapematching.o"
+	@echo "... shapematching.i"
+	@echo "... shapematching.s"
 .PHONY : help
 
 

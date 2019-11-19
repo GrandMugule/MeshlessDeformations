@@ -4,13 +4,14 @@
 #include <iostream>
 #include <ostream>
 
+#include "shapematching.h"
+
 using namespace Eigen; // to use the classes provided by Eigen library
 
 MatrixXd X0;
 MatrixXd X;
 MatrixXd G;
 MatrixXi F;
-MatrixXd C;
 int axe = 0;
 int currentVertex;
 
@@ -52,6 +53,9 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 	if ((unsigned int)key == 32) { //touche espace
 		//update la forme de G
 		//update(X0,X,G)
+		G = ShapeMatching(X0, X).getMatch();
+		viewer.data().clear();
+		viewer.data().set_mesh(G, F);
 		return true;
 	}
 
@@ -99,12 +103,9 @@ int main(int argc, char *argv[]) {
     std::cout << "Vertices: " << X.rows() << std::endl;
     std::cout << "Faces:    " << F.rows() << std::endl;
 
-    C = MatrixXd::Constant(F.rows(), 3, 1);
-
     igl::opengl::glfw::Viewer viewer; // create the 3d viewer
     viewer.callback_key_down = &key_down; // for dealing with keyboard events
     viewer.callback_mouse_down = &mouse_down;
     viewer.data().set_mesh(G, F); // load a face-based representation of the input 3d shape
-    viewer.data().set_colors(C);
     viewer.launch(); // run the editor
 }

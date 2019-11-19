@@ -5,6 +5,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/main.cpp" "/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles/ex_bin.dir/main.cpp.o"
+  "/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/shapematching.cpp" "/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles/ex_bin.dir/shapematching.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

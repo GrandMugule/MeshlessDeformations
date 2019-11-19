@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/ex_bin.dir/main.cpp.o"
+  "CMakeFiles/ex_bin.dir/shapematching.cpp.o"
   "ex_bin.pdb"
   "ex_bin"
 )
