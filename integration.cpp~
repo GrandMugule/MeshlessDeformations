@@ -1,0 +1,3 @@
+#include "integration.h"
+
+using namespace Eigen;

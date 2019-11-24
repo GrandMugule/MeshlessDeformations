@@ -1,0 +1,20 @@
+#pragma once
+
+using namespace Eigen;
+
+class Integration {
+ public:
+    Integration(MatrixXd &_Xi, MatrixXd &_Xf, float _h, float _alpha);
+    ~Integration();
+
+    void performStep();
+    MatrixXd currentPosition();
+
+ private:
+    MatrixXd& Xf;
+    float h;
+    float alpha;
+
+    MatrixXd* X;
+    MatrixXd* V;
+};
