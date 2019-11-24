@@ -12,6 +12,7 @@ MatrixXd X0;
 MatrixXd X;
 MatrixXd G;
 MatrixXi F;
+
 int axe = 0;
 int currentVertex;
 
@@ -52,7 +53,9 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 	if ((unsigned int)key == 32) { //touche espace
 		//update la forme de G
 		//update(X0,X,G)
-	        G = ShapeMatching(X0, X, 0.5, Deformation::QUADRATIC).getMatch();
+ 	        VectorXd W = VectorXd::Ones(X0.rows());
+		W(currentVertex) = 10;
+	        G = ShapeMatching(X0, X, W, 0.5, Deformation::QUADRATIC).getMatch();
 		viewer.data().clear();
 		viewer.data().set_mesh(G, F);
 		return true;

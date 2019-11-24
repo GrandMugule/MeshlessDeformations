@@ -2,12 +2,16 @@
 
 using namespace Eigen;
 
+/*
+  Constructors and destructor.
+*/
+
 ShapeMatching::~ShapeMatching() {
     delete G;
 }
 
-ShapeMatching::ShapeMatching(MatrixXd &_X0, MatrixXd &_X)
-    : X0(_X0), X(_X)
+ShapeMatching::ShapeMatching(MatrixXd &_X0, MatrixXd &_X, VectorXd &_W)
+    : X0(_X0), X(_X), W(_W)
 {
     beta = 0.;
 
@@ -17,8 +21,8 @@ ShapeMatching::ShapeMatching(MatrixXd &_X0, MatrixXd &_X)
     linearDeformation();
 }
 
-ShapeMatching::ShapeMatching(MatrixXd &_X0, MatrixXd &_X, float _beta, Deformation method)
-    : X0(_X0), X(_X)
+ShapeMatching::ShapeMatching(MatrixXd &_X0, MatrixXd &_X, VectorXd &_W, float _beta, Deformation method)
+    : X0(_X0), X(_X), W(_W)
 {
     beta = _beta;
 
@@ -37,11 +41,27 @@ ShapeMatching::ShapeMatching(MatrixXd &_X0, MatrixXd &_X, float _beta, Deformati
     }
 }
 
+/*
+  Linear and quadratic deformations.
+  Rigid deformations are juste a special case of linear deformations, with beta = 0.
+*/
+
+RowVector3d weightedMean(const MatrixXd &V, const VectorXd &weights) {
+    RowVector3d m(0, 0, 0);
+
+    double s = weights.sum();
+    for (int i = 0; i < V.rows(); i++) {
+	m += (weights(i) / s) * V.row(i);
+    }
+
+    return m;
+}
+
 void ShapeMatching::linearDeformation() {
     int n = X0.rows();
 
-    RowVector3d x0cm = X0.colwise().mean();
-    RowVector3d xcm = X.colwise().mean();
+    RowVector3d x0cm = weightedMean(X0, W);
+    RowVector3d xcm = weightedMean(X, W);
 
     MatrixXd Apq = MatrixXd::Zero(3, 3);
     MatrixXd Aqq = MatrixXd::Zero(3, 3);
@@ -50,8 +70,8 @@ void ShapeMatching::linearDeformation() {
 	p.row(0) = X.row(i) - xcm;
 	q.row(0) = X0.row(i) - x0cm;
 
-	Apq += p.transpose() * q;
-	Aqq += q.transpose() * q;
+	Apq += W(i) * p.transpose() * q;
+	Aqq += W(i) * q.transpose() * q;
     }
 
     MatrixXd A = Apq * Aqq.inverse();
@@ -66,8 +86,8 @@ void ShapeMatching::linearDeformation() {
 void ShapeMatching::quadraticDeformation() {
     int n = X0.rows();
 
-    RowVector3d x0cm = X0.colwise().mean();
-    RowVector3d xcm = X.colwise().mean();
+    RowVector3d x0cm = weightedMean(X0, W);
+    RowVector3d xcm = weightedMean(X, W);
 
     MatrixXd p(n, 3);
     MatrixXd r(n, 3);
@@ -80,20 +100,15 @@ void ShapeMatching::quadraticDeformation() {
 	q(i, 6) = r(i, 0)*r(i, 1); q(i, 7) = r(i, 1)*r(i, 2); q(i, 8) = r(i, 2)*r(i, 0);
     }
 
-    /*
-    VectorXd qcm = q.colwise().mean();
-    for (int i = 0; i < n; i++) {
-	q.row(i) -= qcm;
-    }
-    */
+    // The article doesn't mention it, but maybe we should center q
 
     MatrixXd Apr = MatrixXd::Zero(3, 3);
     MatrixXd Apq = MatrixXd::Zero(3, 9);
     MatrixXd Aqq = MatrixXd::Zero(9, 9);
     for (int i = 0; i < n; i++) {
-	Apr += p.row(i).transpose() * r.row(i);
-	Apq += p.row(i).transpose() * q.row(i);
-	Aqq += q.row(i).transpose() * q.row(i);
+	Apr += W(i) * p.row(i).transpose() * r.row(i);
+	Apq += W(i) * p.row(i).transpose() * q.row(i);
+	Aqq += W(i) * q.row(i).transpose() * q.row(i);
     }
     
     Aqq += 0.001 * MatrixXd::Identity(9, 9);

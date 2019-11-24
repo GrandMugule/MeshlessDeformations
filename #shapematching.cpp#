@@ -1,0 +1,61 @@
+#include "shapematching.h"
+
+using namespace Eigen;
+
+/*
+  Constructors and destructor.
+*/
+
+ShapeMatching::~ShapeMatching() {
+    delete G;
+}
+
+ShapeMatching::ShapeMatching(MatrixXd &_X0, MatrixXd &_X, VectorXd &_W)
+    : X0(_X0), X(_X), W(_W)
+{
+    beta = 0.;
+
+    int n = X0.rows();
+    G = new MatrixXd(n, 3);
+
+    linearDeformation();
+}
+
+ShapeMatching::ShapeMatching(MatrixXd &_X0, MatrixXd &_X, VectorXd &_W float _beta, Deformation method)
+    : X0(_X0), X(_X), W(_W)
+{
+    beta = _beta;
+
+    int n = X0.rows();
+    G = new MatrixXd(n, 3);
+    
+    switch (method) {
+    case (Deformation::LINEAR) :
+	linearDeformation();}
+
+    // The article doesn't mention it, but maybe we should center q
+
+    MatrixXd Apr = MatrixXd::Zero(3, 3);
+    MatrixXd Apq = MatrixXd::Zero(3, 9);
+    MatrixXd Aqq = MatrixXd::Zero(9, 9);
+    for (int i = 0; i < n; i++) {
+	Apr += p.row(i).transpose() * r.row(i);
+	Apq += p.row(i).transpose() * q.row(i);
+	Aqq += q.row(i).transpose() * q.row(i);
+    }
+    
+    Aqq += 0.001 * MatrixXd::Identity(9, 9);
+
+    MatrixXd A_quad = Apq * Aqq.inverse();
+
+    MatrixXd S_lin = (Apr.transpose() * Apr).sqrt();
+    MatrixXd R_lin = Apr * S_lin.inverse();
+    MatrixXd R_quad = MatrixXd::Zero(3, 9);
+    R_quad.block(0, 0, 3, 3) = R_lin;
+
+    MatrixXd Q = (beta * A_quad) + ((1 - beta) * R_quad);
+    for (int i = 0; i < n; i++) {
+	G->row(i) = xcm + (q.row(i) * Q.transpose());
+    }
+}
+

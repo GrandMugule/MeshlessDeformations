@@ -16,8 +16,8 @@ enum class Deformation {
 class ShapeMatching {
 public:
     // Constructor without beta performs rigid matching
-    ShapeMatching(MatrixXd &_X0, MatrixXd &_X, float _beta, Deformation method);
-    ShapeMatching(MatrixXd &_X0, MatrixXd &_X);
+    ShapeMatching(MatrixXd &_X0, MatrixXd &_X, VectorXd &_W, float _beta, Deformation method);
+    ShapeMatching(MatrixXd &_X0, MatrixXd &_X, VectorXd &_W);
     ~ShapeMatching();
 
     MatrixXd getMatch(){ return *G; }
@@ -26,6 +26,7 @@ private:
     // Input
     MatrixXd& X0;
     MatrixXd& X;
+    VectorXd& W;
     float beta;
 
     // Output
