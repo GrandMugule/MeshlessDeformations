@@ -80,10 +80,12 @@ void ShapeMatching::quadraticDeformation() {
 	q(i, 6) = r(i, 0)*r(i, 1); q(i, 7) = r(i, 1)*r(i, 2); q(i, 8) = r(i, 2)*r(i, 0);
     }
 
+    /*
     VectorXd qcm = q.colwise().mean();
     for (int i = 0; i < n; i++) {
 	q.row(i) -= qcm;
     }
+    */
 
     MatrixXd Apr = MatrixXd::Zero(3, 3);
     MatrixXd Apq = MatrixXd::Zero(3, 9);
@@ -93,6 +95,8 @@ void ShapeMatching::quadraticDeformation() {
 	Apq += p.row(i).transpose() * q.row(i);
 	Aqq += q.row(i).transpose() * q.row(i);
     }
+    
+    Aqq += 0.001 * MatrixXd::Identity(9, 9);
 
     MatrixXd A_quad = Apq * Aqq.inverse();
 
