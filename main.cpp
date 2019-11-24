@@ -42,8 +42,7 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 		else {
 			X(currentVertex, axe) -= 0.1;
 			std::cout << "offset : " << -0.1 << " " << std::endl;
-		}
-		viewer.data().clear();
+		}		viewer.data().clear();
 		viewer.data().add_points(Newpoint, RowVector3d(0, 1, 0));
 		viewer.data().add_points(Oldpoint, RowVector3d(1, 0, 0));
 		viewer.data().add_edges(Oldpoint, Newpoint, Eigen::RowVector3d(0, 0, 1));
@@ -53,7 +52,7 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 	if ((unsigned int)key == 32) { //touche espace
 		//update la forme de G
 		//update(X0,X,G)
-		G = ShapeMatching(X0, X).getMatch();
+	        G = ShapeMatching(X0, X, 0.5, Deformation::LINEAR).getMatch();
 		viewer.data().clear();
 		viewer.data().set_mesh(G, F);
 		return true;
