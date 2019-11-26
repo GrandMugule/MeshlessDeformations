@@ -3,15 +3,21 @@
 #include <igl/unproject_onto_mesh.h>
 #include <iostream>
 #include <ostream>
+#include <chrono>
+#include <thread>
 
 #include "shapematching.h"
+#include "integration.h"
 
 using namespace Eigen; // to use the classes provided by Eigen library
+using namespace std::this_thread; // sleep_for, sleep_until
+using namespace std::chrono; // nanoseconds, system_clock, seconds
 
 MatrixXd X0;
 MatrixXd X;
 MatrixXd G;
 MatrixXi F;
+Integration *Inte;
 
 int axe = 0;
 int currentVertex;
@@ -53,11 +59,27 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 	if ((unsigned int)key == 32) { //touche espace
 		//update la forme de G
 		//update(X0,X,G)
- 	        VectorXd W = VectorXd::Ones(X0.rows());
+ 	    VectorXd W = VectorXd::Ones(X0.rows());
 		W(currentVertex) = 10;
 	        G = ShapeMatching(X0, X, W, 0.5, Deformation::QUADRATIC).getMatch();
 		viewer.data().clear();
 		viewer.data().set_mesh(G, F);
+		return true;
+	}
+	
+	if ((unsigned int)key == 1) {
+		std::cout << "Etape integration" << std::endl;
+		Inte->performStep();
+		std::cout << Inte->currentPosition() << std::endl;
+		viewer.data().clear();
+		viewer.data().set_mesh(Inte->currentPosition(), F);
+		return true;
+	}
+	if ((unsigned int)key == 'U') {
+		std::cout << "Initialisation integration" << std::endl;
+		MatrixXd _Xi = G;
+		MatrixXd _Xf = X0;
+		Inte = new Integration(_Xi, _Xf, 1, 0.5);
 		return true;
 	}
 
@@ -68,7 +90,6 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 
 
 
-
 bool mouse_down(igl::opengl::glfw::Viewer& viewer, int button, int modifier) {
     int fid, vid;
     Vector3f bc;
@@ -76,8 +97,6 @@ bool mouse_down(igl::opengl::glfw::Viewer& viewer, int button, int modifier) {
     double y = viewer.core().viewport(3) - viewer.current_mouse_y;
     Vector2f mouse_position(x, y);
     if (igl::unproject_onto_mesh(mouse_position, viewer.core().view, viewer.core().proj, viewer.core().viewport, G, F, fid, bc)) {
-		//update la forme de G si on touche un nouveau point
-		// update(X0,X,G);
         int bcid;
         bc.maxCoeff(&bcid);
         vid = F(fid, bcid);
@@ -99,12 +118,14 @@ int main(int argc, char *argv[]) {
     else {
         igl::readOFF(argv[1], X0, F); // input mesh given in command line
     }
+
 	X = X0;
 	G = X0;
     //  print the number of mesh elements
     std::cout << "Vertices: " << X.rows() << std::endl;
     std::cout << "Faces:    " << F.rows() << std::endl;
 
+	
     igl::opengl::glfw::Viewer viewer; // create the 3d viewer
     viewer.callback_key_down = &key_down; // for dealing with keyboard events
     viewer.callback_mouse_down = &mouse_down;
