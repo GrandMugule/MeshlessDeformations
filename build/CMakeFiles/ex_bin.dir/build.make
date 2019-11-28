@@ -57,9 +57,57 @@ include CMakeFiles/ex_bin.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/ex_bin.dir/flags.make
 
+CMakeFiles/ex_bin.dir/adjacency.cpp.o: CMakeFiles/ex_bin.dir/flags.make
+CMakeFiles/ex_bin.dir/adjacency.cpp.o: ../adjacency.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/ex_bin.dir/adjacency.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/ex_bin.dir/adjacency.cpp.o -c /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/adjacency.cpp
+
+CMakeFiles/ex_bin.dir/adjacency.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/ex_bin.dir/adjacency.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/adjacency.cpp > CMakeFiles/ex_bin.dir/adjacency.cpp.i
+
+CMakeFiles/ex_bin.dir/adjacency.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ex_bin.dir/adjacency.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/adjacency.cpp -o CMakeFiles/ex_bin.dir/adjacency.cpp.s
+
+CMakeFiles/ex_bin.dir/adjacency.cpp.o.requires:
+
+.PHONY : CMakeFiles/ex_bin.dir/adjacency.cpp.o.requires
+
+CMakeFiles/ex_bin.dir/adjacency.cpp.o.provides: CMakeFiles/ex_bin.dir/adjacency.cpp.o.requires
+	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/adjacency.cpp.o.provides.build
+.PHONY : CMakeFiles/ex_bin.dir/adjacency.cpp.o.provides
+
+CMakeFiles/ex_bin.dir/adjacency.cpp.o.provides.build: CMakeFiles/ex_bin.dir/adjacency.cpp.o
+
+
+CMakeFiles/ex_bin.dir/integration.cpp.o: CMakeFiles/ex_bin.dir/flags.make
+CMakeFiles/ex_bin.dir/integration.cpp.o: ../integration.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/ex_bin.dir/integration.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/ex_bin.dir/integration.cpp.o -c /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/integration.cpp
+
+CMakeFiles/ex_bin.dir/integration.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/ex_bin.dir/integration.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/integration.cpp > CMakeFiles/ex_bin.dir/integration.cpp.i
+
+CMakeFiles/ex_bin.dir/integration.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ex_bin.dir/integration.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/integration.cpp -o CMakeFiles/ex_bin.dir/integration.cpp.s
+
+CMakeFiles/ex_bin.dir/integration.cpp.o.requires:
+
+.PHONY : CMakeFiles/ex_bin.dir/integration.cpp.o.requires
+
+CMakeFiles/ex_bin.dir/integration.cpp.o.provides: CMakeFiles/ex_bin.dir/integration.cpp.o.requires
+	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/integration.cpp.o.provides.build
+.PHONY : CMakeFiles/ex_bin.dir/integration.cpp.o.provides
+
+CMakeFiles/ex_bin.dir/integration.cpp.o.provides.build: CMakeFiles/ex_bin.dir/integration.cpp.o
+
+
 CMakeFiles/ex_bin.dir/main.cpp.o: CMakeFiles/ex_bin.dir/flags.make
 CMakeFiles/ex_bin.dir/main.cpp.o: ../main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/ex_bin.dir/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/ex_bin.dir/main.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/ex_bin.dir/main.cpp.o -c /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/main.cpp
 
 CMakeFiles/ex_bin.dir/main.cpp.i: cmake_force
@@ -83,7 +131,7 @@ CMakeFiles/ex_bin.dir/main.cpp.o.provides.build: CMakeFiles/ex_bin.dir/main.cpp.
 
 CMakeFiles/ex_bin.dir/shapematching.cpp.o: CMakeFiles/ex_bin.dir/flags.make
 CMakeFiles/ex_bin.dir/shapematching.cpp.o: ../shapematching.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/ex_bin.dir/shapematching.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/ex_bin.dir/shapematching.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/ex_bin.dir/shapematching.cpp.o -c /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/shapematching.cpp
 
 CMakeFiles/ex_bin.dir/shapematching.cpp.i: cmake_force
@@ -107,12 +155,16 @@ CMakeFiles/ex_bin.dir/shapematching.cpp.o.provides.build: CMakeFiles/ex_bin.dir/
 
 # Object files for target ex_bin
 ex_bin_OBJECTS = \
+"CMakeFiles/ex_bin.dir/adjacency.cpp.o" \
+"CMakeFiles/ex_bin.dir/integration.cpp.o" \
 "CMakeFiles/ex_bin.dir/main.cpp.o" \
 "CMakeFiles/ex_bin.dir/shapematching.cpp.o"
 
 # External object files for target ex_bin
 ex_bin_EXTERNAL_OBJECTS =
 
+ex_bin: CMakeFiles/ex_bin.dir/adjacency.cpp.o
+ex_bin: CMakeFiles/ex_bin.dir/integration.cpp.o
 ex_bin: CMakeFiles/ex_bin.dir/main.cpp.o
 ex_bin: CMakeFiles/ex_bin.dir/shapematching.cpp.o
 ex_bin: CMakeFiles/ex_bin.dir/build.make
@@ -123,7 +175,7 @@ ex_bin: /usr/lib/x86_64-linux-gnu/librt.so
 ex_bin: /usr/lib/x86_64-linux-gnu/libm.so
 ex_bin: /usr/lib/x86_64-linux-gnu/libX11.so
 ex_bin: CMakeFiles/ex_bin.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable ex_bin"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable ex_bin"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/ex_bin.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -131,6 +183,8 @@ CMakeFiles/ex_bin.dir/build: ex_bin
 
 .PHONY : CMakeFiles/ex_bin.dir/build
 
+CMakeFiles/ex_bin.dir/requires: CMakeFiles/ex_bin.dir/adjacency.cpp.o.requires
+CMakeFiles/ex_bin.dir/requires: CMakeFiles/ex_bin.dir/integration.cpp.o.requires
 CMakeFiles/ex_bin.dir/requires: CMakeFiles/ex_bin.dir/main.cpp.o.requires
 CMakeFiles/ex_bin.dir/requires: CMakeFiles/ex_bin.dir/shapematching.cpp.o.requires
 

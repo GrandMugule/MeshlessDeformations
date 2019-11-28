@@ -149,6 +149,60 @@ glfw/fast:
 	$(MAKE) -f glfw/src/CMakeFiles/glfw.dir/build.make glfw/src/CMakeFiles/glfw.dir/build
 .PHONY : glfw/fast
 
+adjacency.o: adjacency.cpp.o
+
+.PHONY : adjacency.o
+
+# target to build an object file
+adjacency.cpp.o:
+	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/adjacency.cpp.o
+.PHONY : adjacency.cpp.o
+
+adjacency.i: adjacency.cpp.i
+
+.PHONY : adjacency.i
+
+# target to preprocess a source file
+adjacency.cpp.i:
+	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/adjacency.cpp.i
+.PHONY : adjacency.cpp.i
+
+adjacency.s: adjacency.cpp.s
+
+.PHONY : adjacency.s
+
+# target to generate assembly for a file
+adjacency.cpp.s:
+	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/adjacency.cpp.s
+.PHONY : adjacency.cpp.s
+
+integration.o: integration.cpp.o
+
+.PHONY : integration.o
+
+# target to build an object file
+integration.cpp.o:
+	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/integration.cpp.o
+.PHONY : integration.cpp.o
+
+integration.i: integration.cpp.i
+
+.PHONY : integration.i
+
+# target to preprocess a source file
+integration.cpp.i:
+	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/integration.cpp.i
+.PHONY : integration.cpp.i
+
+integration.s: integration.cpp.s
+
+.PHONY : integration.s
+
+# target to generate assembly for a file
+integration.cpp.s:
+	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/integration.cpp.s
+.PHONY : integration.cpp.s
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -214,6 +268,12 @@ help:
 	@echo "... ex_bin"
 	@echo "... glad"
 	@echo "... glfw"
+	@echo "... adjacency.o"
+	@echo "... adjacency.i"
+	@echo "... adjacency.s"
+	@echo "... integration.o"
+	@echo "... integration.i"
+	@echo "... integration.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

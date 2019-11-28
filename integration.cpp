@@ -29,9 +29,6 @@ Integration::Integration(MatrixXd &_Xi, MatrixXd &_Xf, float _h, float _alpha)
 */
 
 void Integration::performStep() {
-    int n = X->rows();
-    for (int i = 0; i < n; i++) {
-	V->row(i) += alpha * (Xf.row(i) - X->row(i)) / h;
-	X->row(i) += h * V->row(i);
-    }
+    *V += alpha * (Xf - *X) / h;
+    *X += h * *V;
 }

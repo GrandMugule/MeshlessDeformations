@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/ex_bin.dir/adjacency.cpp.o"
+  "CMakeFiles/ex_bin.dir/integration.cpp.o"
   "CMakeFiles/ex_bin.dir/main.cpp.o"
   "CMakeFiles/ex_bin.dir/shapematching.cpp.o"
   "ex_bin.pdb"

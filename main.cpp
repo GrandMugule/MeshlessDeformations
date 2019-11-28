@@ -17,7 +17,7 @@ MatrixXd X0;
 MatrixXd X;
 MatrixXd G;
 MatrixXi F;
-Integration *Inte;
+Integration *I;
 
 int axe = 0;
 int currentVertex;
@@ -40,26 +40,28 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 		return true;
 	}
 	if ((unsigned int)key == 6 || (unsigned int)key == 7) { //6 : touche fleche de droite, 7 : touche fleche de gauche
-		MatrixXd Oldpoint = G.row(currentVertex);
-		MatrixXd Newpoint = X.row(currentVertex);
+		RowVector3d oldPoint = G.row(currentVertex);
+		RowVector3d newPoint = X.row(currentVertex);
 		if ((unsigned int)key == 6) { //fleche de droite
-			X(currentVertex, axe) += 0.1;
+		        newPoint(axe) += 0.1;
 			std::cout << "offset : " << 0.1 << " " << std::endl;
 		}
 		else {
-			X(currentVertex, axe) -= 0.1;
+		        newPoint(axe) -= 0.1;
 			std::cout << "offset : " << -0.1 << " " << std::endl;
-		}		viewer.data().clear();
-		viewer.data().add_points(Newpoint, RowVector3d(0, 1, 0));
-		viewer.data().add_points(Oldpoint, RowVector3d(1, 0, 0));
-		viewer.data().add_edges(Oldpoint, Newpoint, Eigen::RowVector3d(0, 0, 1));
+		}
+		X.row(currentVertex) = newPoint;
+		viewer.data().clear();
+		viewer.data().add_points(newPoint, RowVector3d(0, 1, 0));
+		viewer.data().add_points(oldPoint, RowVector3d(1, 0, 0));
+		viewer.data().add_edges(oldPoint, newPoint, Eigen::RowVector3d(0, 0, 1));
 		viewer.data().set_mesh(G, F);
 		return true;
 	}
 	if ((unsigned int)key == 32) { //touche espace
 		//update la forme de G
 		//update(X0,X,G)
- 	    VectorXd W = VectorXd::Ones(X0.rows());
+ 	        VectorXd W = VectorXd::Ones(X0.rows());
 		W(currentVertex) = 10;
 	        G = ShapeMatching(X0, X, W, 0.5, Deformation::QUADRATIC).getMatch();
 		viewer.data().clear();
@@ -69,17 +71,15 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 	
 	if ((unsigned int)key == 1) {
 		std::cout << "Etape integration" << std::endl;
-		Inte->performStep();
-		std::cout << Inte->currentPosition() << std::endl;
+		I->performStep();
+		std::cout << I->currentPosition() << std::endl;
 		viewer.data().clear();
-		viewer.data().set_mesh(Inte->currentPosition(), F);
+		viewer.data().set_mesh(I->currentPosition(), F);
 		return true;
 	}
 	if ((unsigned int)key == 'U') {
 		std::cout << "Initialisation integration" << std::endl;
-		MatrixXd _Xi = G;
-		MatrixXd _Xf = X0;
-		Inte = new Integration(_Xi, _Xf, 1, 0.5);
+		I = new Integration(G, X0, 0.1, 0.1);
 		return true;
 	}
 
@@ -119,7 +119,7 @@ int main(int argc, char *argv[]) {
         igl::readOFF(argv[1], X0, F); // input mesh given in command line
     }
 
-	X = X0;
+        X = X0;
 	G = X0;
     //  print the number of mesh elements
     std::cout << "Vertices: " << X.rows() << std::endl;
