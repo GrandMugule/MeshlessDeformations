@@ -9,12 +9,13 @@ using namespace Eigen;
 
 class Adjacency {
  public:
-    Adjacency(const MatrixXi &F, int nVertices);
+    Adjacency(const MatrixXi &F, int _nVertices);
     ~Adjacency();
 
-    list<int>& getNeighbours(int v){ return adjList[v]; } 
+    list<int> getNeighborhood(int s, int maxDepth = 3);
 
  private:
+    int nVertices;
     vector<list<int> > adjList;
     
 };

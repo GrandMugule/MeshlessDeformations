@@ -771,6 +771,7 @@ CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/IN
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/external/glad/include/KHR/khrplatform.h
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/external/glad/include/glad/glad.h
 CMakeFiles/ex_bin.dir/main.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/external/glfw/include/GLFW/glfw3.h
+CMakeFiles/ex_bin.dir/main.cpp.o: ../adjacency.h
 CMakeFiles/ex_bin.dir/main.cpp.o: ../integration.h
 CMakeFiles/ex_bin.dir/main.cpp.o: ../main.cpp
 CMakeFiles/ex_bin.dir/main.cpp.o: ../shapematching.h

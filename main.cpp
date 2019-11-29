@@ -3,24 +3,29 @@
 #include <igl/unproject_onto_mesh.h>
 #include <iostream>
 #include <ostream>
-#include <chrono>
-#include <thread>
+#include <list>
+#include <iterator>
 
 #include "shapematching.h"
 #include "integration.h"
+#include "adjacency.h"
 
 using namespace Eigen; // to use the classes provided by Eigen library
-using namespace std::this_thread; // sleep_for, sleep_until
-using namespace std::chrono; // nanoseconds, system_clock, seconds
 
+// Initial mesh
 MatrixXd X0;
-MatrixXd X;
-MatrixXd G;
 MatrixXi F;
-Integration* I;
+Adjacency* A;
 
+// Elastic stretching
+MatrixXd X;
 int axe = 0;
 int currentVertex;
+list<int> currentNeighborhood;
+MatrixXd G;
+
+// Integration scheme
+Integration* I;
 
 bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier) {
     std::cout << "pressed Key: " << key << " " << (unsigned int)key << std::endl;
@@ -59,10 +64,13 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 		return true;
 	}
 	if ((unsigned int)key == 32) { //touche espace
-		//update la forme de G
-		//update(X0,X,G)
+	        // update all vertices in neighborhood
+	        RowVector3d delta = X.row(currentVertex) - G.row(currentVertex);
+	        for (list<int>::iterator it = currentNeighborhood.begin(); it != currentNeighborhood.end(); ++it) {
+		    X.row(*it) += delta;
+		}
+		//update G
  	        VectorXd W = VectorXd::Ones(X0.rows());
-		W(currentVertex) = 10;
 	        G = ShapeMatching(X0, X, W, 0.5, Deformation::QUADRATIC).getMatch();
 		viewer.data().clear();
 		viewer.data().set_mesh(G, F);
@@ -98,12 +106,18 @@ bool mouse_down(igl::opengl::glfw::Viewer& viewer, int button, int modifier) {
     double y = viewer.core().viewport(3) - viewer.current_mouse_y;
     Vector2f mouse_position(x, y);
     if (igl::unproject_onto_mesh(mouse_position, viewer.core().view, viewer.core().proj, viewer.core().viewport, G, F, fid, bc)) {
+	// find nearest vertex
         int bcid;
         bc.maxCoeff(&bcid);
         vid = F(fid, bcid);
         MatrixXd P(1, 3);
         P.row(0) = G.row(vid);
-		currentVertex = vid;
+	
+	// update current vertex and neighborhood
+	currentVertex = vid;
+	currentNeighborhood = A->getNeighborhood(currentVertex);
+
+	// add a red dot on the viewer
         viewer.data().add_points(P, RowVector3d(1, 0, 0));
         return true;
     }
@@ -124,20 +138,26 @@ bool pre_draw(igl::opengl::glfw::Viewer& viewer) {
 
 
 int main(int argc, char *argv[]) {
+    // initialize input mesh
     if (argc < 2) {
-        igl::readOFF("../data/bunny.off", X0, F); // default input mesh
+        igl::readOFF("../data/bunny.off", X0, F);
     }
     else {
-        igl::readOFF(argv[1], X0, F); // input mesh given in command line
+        igl::readOFF(argv[1], X0, F);
     }
 
-        X = X0;
-	G = X0;
     //  print the number of mesh elements
-    std::cout << "Vertices: " << X.rows() << std::endl;
+    std::cout << "Vertices: " << X0.rows() << std::endl;
     std::cout << "Faces:    " << F.rows() << std::endl;
 
-	
+    // initialize adjacency graph
+    A = new Adjacency(F, X0.rows());
+
+    // elastic stretching matrices
+    X = X0;
+    G = X0;
+
+    // initialize viewer
     igl::opengl::glfw::Viewer viewer; // create the 3d viewer
     viewer.callback_key_down = &key_down; // for dealing with keyboard events
     viewer.callback_mouse_down = &mouse_down;

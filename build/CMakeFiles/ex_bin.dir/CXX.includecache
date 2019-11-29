@@ -2725,6 +2725,8 @@ vulkan/vulkan.h
 /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/adjacency.cpp
 adjacency.h
 /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/adjacency.h
+queue
+-
 iterator
 -
 Eigen/SparseCore
@@ -2763,14 +2765,16 @@ iostream
 -
 ostream
 -
-chrono
+list
 -
-thread
+iterator
 -
 shapematching.h
 /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/shapematching.h
 integration.h
 /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/integration.h
+adjacency.h
+/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/adjacency.h
 
 /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/shapematching.cpp
 shapematching.h

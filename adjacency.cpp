@@ -1,5 +1,6 @@
 #include "adjacency.h"
 
+#include <queue>
 #include <iterator>
 #include <Eigen/SparseCore>
 
@@ -8,7 +9,8 @@ using namespace Eigen;
 
 Adjacency::~Adjacency(){}
 
-Adjacency::Adjacency(const MatrixXi &F, int nVertices) {
+Adjacency::Adjacency(const MatrixXi &F, int _nVertices) {
+    nVertices = _nVertices;
     adjList = vector<list<int> >(nVertices);
 
     vector<Triplet<bool> > triplets;
@@ -28,4 +30,33 @@ Adjacency::Adjacency(const MatrixXi &F, int nVertices) {
 	    adjList[it.row()].push_back(it.col());
 	}
     }
+}
+
+list<int> Adjacency::getNeighborhood(int s, int maxDepth) {
+    list<int> neighborhood;
+
+    queue<int> Q;
+    vector<bool> seen(nVertices, false);
+    vector<int> depth(nVertices);
+    
+    Q.push(s);
+    seen[s] = true;
+    depth[s] = 0;
+
+    while (!Q.empty()) {
+	int v = Q.front();
+	Q.pop();
+	neighborhood.push_back(v);
+	if (depth[v] == maxDepth) continue;
+
+	for (list<int>::iterator it = adjList[v].begin(); it != adjList[v].end(); ++it) {
+	    if (seen[*it]) continue;
+	    Q.push(*it);
+	    seen[*it] = true;
+	    depth[*it] = depth[v] + 1;
+	}
+    }
+
+    neighborhood.pop_front();
+    return neighborhood;
 }
