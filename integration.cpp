@@ -28,7 +28,8 @@ Integration::Integration(MatrixXd &_Xi, MatrixXd &_Xf, float _h, float _alpha)
   Integration scheme.
 */
 
-void Integration::performStep() {
+void Integration::performStep(float lambda) {
+    *V *= lambda;
     *V += alpha * (Xf - *X) / h;
     *X += h * *V;
 }

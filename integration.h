@@ -12,7 +12,7 @@ class Integration {
     Integration(MatrixXd &_Xi, MatrixXd &_Xf, float _h, float _alpha);
     ~Integration();
 
-    void performStep();
+    void performStep(float lambda = 0.9);
     MatrixXd currentPosition(){ return *X; }
 
  private:

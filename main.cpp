@@ -17,7 +17,7 @@ MatrixXd X0;
 MatrixXd X;
 MatrixXd G;
 MatrixXi F;
-Integration *I;
+Integration* I;
 
 int axe = 0;
 int currentVertex;
@@ -80,6 +80,7 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 	if ((unsigned int)key == 'U') {
 		std::cout << "Initialisation integration" << std::endl;
 		I = new Integration(G, X0, 0.1, 0.1);
+		viewer.core().is_animating = true;
 		return true;
 	}
 
@@ -111,9 +112,20 @@ bool mouse_down(igl::opengl::glfw::Viewer& viewer, int button, int modifier) {
 
 
 
+bool pre_draw(igl::opengl::glfw::Viewer& viewer) {
+    if (viewer.core().is_animating) {
+	I->performStep();
+	viewer.data().clear();
+	viewer.data().set_mesh(I->currentPosition(), F);
+    }
+    return false;
+}
+
+
+
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        igl::readOFF("../data/octagon.off", X0, F); // default input mesh
+        igl::readOFF("../data/bunny.off", X0, F); // default input mesh
     }
     else {
         igl::readOFF(argv[1], X0, F); // input mesh given in command line
@@ -129,6 +141,8 @@ int main(int argc, char *argv[]) {
     igl::opengl::glfw::Viewer viewer; // create the 3d viewer
     viewer.callback_key_down = &key_down; // for dealing with keyboard events
     viewer.callback_mouse_down = &mouse_down;
+    viewer.core().is_animating = false;
+    viewer.callback_pre_draw = &pre_draw; // to perform animation steps
     viewer.data().set_mesh(G, F); // load a face-based representation of the input 3d shape
     viewer.launch(); // run the editor
 }
