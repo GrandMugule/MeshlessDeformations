@@ -28,6 +28,16 @@ MatrixXd G;
 Integration* I;
 
 bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier) {
+	/*
+	Resumé des touches utilisees :
+	- X,Y,Z : selectionne l'axe pour les déplacements
+	- flèche droite, flèche gauche : déplace le point selectionné selon l'axe
+	- espace : actualise la forme en effectuant le shapematching
+	- D (Début) : lance l'integration (la forme revient à son état initial)
+	- S (Stop) : arrête l'intégration. Permet de recommencer en déplacement d'autres points
+	- M (Montée) : translate l'ensemble de la forme dans la direction de l'axe (NB attention sur clavier azerty c'est la virgule)
+	- C (Chute) : simule une chute libre de l'objet qui revient à sa position initiale, avec un sol et des rebonds
+	*/
     std::cout << "pressed Key: " << key << " " << (unsigned int)key << std::endl;
 	if (key == 'X') {
 		axe = 0;
@@ -85,9 +95,32 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 		viewer.data().set_mesh(I->currentPosition(), F);
 		return true;
 	}
-	if ((unsigned int)key == 'U') {
+	if ((unsigned int)key == 'D') {
 		std::cout << "Initialisation integration" << std::endl;
 		I = new Integration(G, X0, 0.1, 0.1);
+		viewer.core().is_animating = true;
+		return true;
+	}
+	if ((unsigned int)key == 'S') {
+		std::cout << "Fin integration" << std::endl;
+		G = I->currentPosition();
+		viewer.core().is_animating = false;
+		return true;
+	}
+	if ((unsigned int)key == 'M') { //M comme Montée
+		std::cout << "Montée de l'objet selon l'axe choisi" << std::endl;
+		RowVector3d offset(0, 0, 0);
+		offset(axe) = 0.4;
+		for (int i = 0; i < G.rows(); i++) {
+			G.row(i) += offset;
+		}
+		viewer.data().clear();
+		viewer.data().set_mesh(G, F);
+		return true;
+	}
+	if ((unsigned int)key == 'C') { //C comme Chute
+		std::cout << "Initialisation chute libre en direction de l'axe choisi" << std::endl;
+		I = new Integration(G, X0, 0.01, 0.2, true, axe);
 		viewer.core().is_animating = true;
 		return true;
 	}
