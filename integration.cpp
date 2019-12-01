@@ -48,15 +48,13 @@ Integration::Integration(MatrixXd& _Xi, MatrixXd& _Xf, float _h, float _alpha, b
 void Integration::performStep(float lambda) {
 	*V *= lambda;
 	*V += alpha * (Xf - *X) / h;
+    *X += h * *V;
 	if (gravity) {
 		for (int i = 0; i < X->rows(); i++) {
 			if (X->row(i)(axis_gravity) < sol) {
-				X->row(i)(axis_gravity) = sol;	
-				V->row(i)(axis_gravity) = 0.2*abs(V->row(i)(axis_gravity));
+				X->row(i)(axis_gravity) = sol;
+				V->row(i)(axis_gravity) = 0.05 * abs(V->row(i)(axis_gravity));
 			}
 		}
-		
 	}
-    *X += h * *V;
-
 }
