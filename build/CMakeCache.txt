@@ -181,7 +181,7 @@ CMAKE_OBJCOPY:FILEPATH=/usr/bin/objcopy
 CMAKE_OBJDUMP:FILEPATH=/usr/bin/objdump
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=deformations
+CMAKE_PROJECT_NAME:STATIC=MeshlessDeformations
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib
@@ -327,6 +327,12 @@ LIBIGL_WITH_XML:BOOL=OFF
 
 //Path to a library.
 MATH_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libm.so
+
+//Value Computed by CMake
+MeshlessDeformations_BINARY_DIR:STATIC=/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build
+
+//Value Computed by CMake
+MeshlessDeformations_SOURCE_DIR:STATIC=/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations
 
 //Path to a file.
 OPENGL_EGL_INCLUDE_DIR:PATH=/usr/include

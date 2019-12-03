@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named ex_bin
+# Target rules for targets named stretching
 
 # Build rule for target.
-ex_bin: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 ex_bin
-.PHONY : ex_bin
+stretching: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 stretching
+.PHONY : stretching
 
 # fast build rule for target.
-ex_bin/fast:
-	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/build
-.PHONY : ex_bin/fast
+stretching/fast:
+	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/build
+.PHONY : stretching/fast
 
 #=============================================================================
 # Target rules for targets named glad
@@ -149,113 +149,113 @@ glfw/fast:
 	$(MAKE) -f glfw/src/CMakeFiles/glfw.dir/build.make glfw/src/CMakeFiles/glfw.dir/build
 .PHONY : glfw/fast
 
-adjacency.o: adjacency.cpp.o
+src/adjacency.o: src/adjacency.cpp.o
 
-.PHONY : adjacency.o
-
-# target to build an object file
-adjacency.cpp.o:
-	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/adjacency.cpp.o
-.PHONY : adjacency.cpp.o
-
-adjacency.i: adjacency.cpp.i
-
-.PHONY : adjacency.i
-
-# target to preprocess a source file
-adjacency.cpp.i:
-	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/adjacency.cpp.i
-.PHONY : adjacency.cpp.i
-
-adjacency.s: adjacency.cpp.s
-
-.PHONY : adjacency.s
-
-# target to generate assembly for a file
-adjacency.cpp.s:
-	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/adjacency.cpp.s
-.PHONY : adjacency.cpp.s
-
-integration.o: integration.cpp.o
-
-.PHONY : integration.o
+.PHONY : src/adjacency.o
 
 # target to build an object file
-integration.cpp.o:
-	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/integration.cpp.o
-.PHONY : integration.cpp.o
+src/adjacency.cpp.o:
+	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/adjacency.cpp.o
+.PHONY : src/adjacency.cpp.o
 
-integration.i: integration.cpp.i
+src/adjacency.i: src/adjacency.cpp.i
 
-.PHONY : integration.i
+.PHONY : src/adjacency.i
 
 # target to preprocess a source file
-integration.cpp.i:
-	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/integration.cpp.i
-.PHONY : integration.cpp.i
+src/adjacency.cpp.i:
+	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/adjacency.cpp.i
+.PHONY : src/adjacency.cpp.i
 
-integration.s: integration.cpp.s
+src/adjacency.s: src/adjacency.cpp.s
 
-.PHONY : integration.s
+.PHONY : src/adjacency.s
 
 # target to generate assembly for a file
-integration.cpp.s:
-	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/integration.cpp.s
-.PHONY : integration.cpp.s
+src/adjacency.cpp.s:
+	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/adjacency.cpp.s
+.PHONY : src/adjacency.cpp.s
 
-main.o: main.cpp.o
+src/integration.o: src/integration.cpp.o
 
-.PHONY : main.o
+.PHONY : src/integration.o
 
 # target to build an object file
-main.cpp.o:
-	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/main.cpp.o
-.PHONY : main.cpp.o
+src/integration.cpp.o:
+	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/integration.cpp.o
+.PHONY : src/integration.cpp.o
 
-main.i: main.cpp.i
+src/integration.i: src/integration.cpp.i
 
-.PHONY : main.i
+.PHONY : src/integration.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/main.cpp.i
-.PHONY : main.cpp.i
+src/integration.cpp.i:
+	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/integration.cpp.i
+.PHONY : src/integration.cpp.i
 
-main.s: main.cpp.s
+src/integration.s: src/integration.cpp.s
 
-.PHONY : main.s
+.PHONY : src/integration.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/main.cpp.s
-.PHONY : main.cpp.s
+src/integration.cpp.s:
+	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/integration.cpp.s
+.PHONY : src/integration.cpp.s
 
-shapematching.o: shapematching.cpp.o
+src/shapematching.o: src/shapematching.cpp.o
 
-.PHONY : shapematching.o
+.PHONY : src/shapematching.o
 
 # target to build an object file
-shapematching.cpp.o:
-	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/shapematching.cpp.o
-.PHONY : shapematching.cpp.o
+src/shapematching.cpp.o:
+	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/shapematching.cpp.o
+.PHONY : src/shapematching.cpp.o
 
-shapematching.i: shapematching.cpp.i
+src/shapematching.i: src/shapematching.cpp.i
 
-.PHONY : shapematching.i
+.PHONY : src/shapematching.i
 
 # target to preprocess a source file
-shapematching.cpp.i:
-	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/shapematching.cpp.i
-.PHONY : shapematching.cpp.i
+src/shapematching.cpp.i:
+	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/shapematching.cpp.i
+.PHONY : src/shapematching.cpp.i
 
-shapematching.s: shapematching.cpp.s
+src/shapematching.s: src/shapematching.cpp.s
 
-.PHONY : shapematching.s
+.PHONY : src/shapematching.s
 
 # target to generate assembly for a file
-shapematching.cpp.s:
-	$(MAKE) -f CMakeFiles/ex_bin.dir/build.make CMakeFiles/ex_bin.dir/shapematching.cpp.s
-.PHONY : shapematching.cpp.s
+src/shapematching.cpp.s:
+	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/shapematching.cpp.s
+.PHONY : src/shapematching.cpp.s
+
+src/stretching.o: src/stretching.cpp.o
+
+.PHONY : src/stretching.o
+
+# target to build an object file
+src/stretching.cpp.o:
+	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/stretching.cpp.o
+.PHONY : src/stretching.cpp.o
+
+src/stretching.i: src/stretching.cpp.i
+
+.PHONY : src/stretching.i
+
+# target to preprocess a source file
+src/stretching.cpp.i:
+	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/stretching.cpp.i
+.PHONY : src/stretching.cpp.i
+
+src/stretching.s: src/stretching.cpp.s
+
+.PHONY : src/stretching.s
+
+# target to generate assembly for a file
+src/stretching.cpp.s:
+	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/stretching.cpp.s
+.PHONY : src/stretching.cpp.s
 
 # Help Target
 help:
@@ -265,21 +265,21 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... ex_bin"
+	@echo "... stretching"
 	@echo "... glad"
 	@echo "... glfw"
-	@echo "... adjacency.o"
-	@echo "... adjacency.i"
-	@echo "... adjacency.s"
-	@echo "... integration.o"
-	@echo "... integration.i"
-	@echo "... integration.s"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
-	@echo "... shapematching.o"
-	@echo "... shapematching.i"
-	@echo "... shapematching.s"
+	@echo "... src/adjacency.o"
+	@echo "... src/adjacency.i"
+	@echo "... src/adjacency.s"
+	@echo "... src/integration.o"
+	@echo "... src/integration.i"
+	@echo "... src/integration.s"
+	@echo "... src/shapematching.o"
+	@echo "... src/shapematching.i"
+	@echo "... src/shapematching.s"
+	@echo "... src/stretching.o"
+	@echo "... src/stretching.i"
+	@echo "... src/stretching.s"
 .PHONY : help
 
 

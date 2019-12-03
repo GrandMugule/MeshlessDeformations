@@ -1,0 +1,1 @@
+/usr/bin/c++   -fPIC  -rdynamic CMakeFiles/stretching.dir/src/adjacency.cpp.o CMakeFiles/stretching.dir/src/integration.cpp.o CMakeFiles/stretching.dir/src/shapematching.cpp.o CMakeFiles/stretching.dir/src/stretching.cpp.o  -o ../bin/stretching /usr/lib/x86_64-linux-gnu/libGL.so glad/libglad.a glfw/src/libglfw3.a -lrt -lm -ldl -lX11 -lpthread 

@@ -75,7 +75,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/ex_bin.dir/DependInfo.cmake"
+  "CMakeFiles/stretching.dir/DependInfo.cmake"
   "glad/CMakeFiles/glad.dir/DependInfo.cmake"
   "glfw/src/CMakeFiles/glfw.dir/DependInfo.cmake"
   )
