@@ -1,0 +1,1 @@
+/usr/bin/c++  -O3 -DNDEBUG  -rdynamic CMakeFiles/stretching.dir/stretching.cpp.o  -o stretching -Wl,-rpath,/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/src ../src/libutils.so /usr/lib/x86_64-linux-gnu/libGL.so ../glad/libglad.a ../glfw/src/libglfw3.a -lrt -lm -ldl -lX11 -lpthread 

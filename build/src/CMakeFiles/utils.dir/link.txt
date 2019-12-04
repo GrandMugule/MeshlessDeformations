@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -O3 -DNDEBUG  -shared -Wl,-soname,libutils.so -o libutils.so CMakeFiles/utils.dir/adjacency.cpp.o CMakeFiles/utils.dir/clustering.cpp.o CMakeFiles/utils.dir/integration.cpp.o CMakeFiles/utils.dir/shapematching.cpp.o -lpthread 
