@@ -1,0 +1,113 @@
+#include "clustering.h"
+
+#include <Eigen/Eigenvalues>
+#include <cmath>
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <limits>
+
+using namespace std;
+using namespace Eigen;
+
+SpectralClustering::SpectralClustering(const MatrixXd &X, const MatrixXi &F, int _k, int _nFeatures) {
+    buildLB(X, F);
+
+    nFeatures = _nFeatures;
+    computeDescriptors();
+
+    k = _k;
+    computeClusters();
+}
+
+/*
+  Use Laplace-Beltrami operator to compute a descriptor for each vertex.
+*/
+
+void SpectralClustering::buildLB(const MatrixXd &X, const MatrixXi &F) {
+    int n = X.rows();
+    int f = F.rows();
+
+    A = MatrixXd::Zero(n, n);
+    W = MatrixXd::Zero(n, n);
+    for (int i = 0; i < f; i++) {
+	int u, v, w;
+	u = F(i, 0); v = F(i, 1); w = F(i, 2);
+	
+	double d0, d1, d2;
+	d0 = (X.row(v) - X.row(u)).norm();
+	d1 = (X.row(w) - X.row(v)).norm();
+	d2 = (X.row(u) - X.row(w)).norm();
+
+	double s = (d0 + d1 + d2) / 2;
+	double area = sqrt(s * (s - d0) * (s - d1) * (s - d2));
+	
+	A(u, u) += area / 3; A(v, v) += area / 3; A(w, w) += area / 3;
+
+	double w0, w1, w2;
+	w0 = (d0*d0 - d1*d1 - d2*d2) / (8 * area);
+	w1 = (d1*d1 - d2*d2 - d0*d0) / (8 * area);
+	w2 = (d2*d2 - d0*d0 - d1*d1) / (8 * area);
+
+	W(u, v) += w0; W(v, u) += w0; W(u, u) -= w0; W(v, v) -= w0;
+	W(v, w) += w1; W(w, v) += w1; W(v, v) -= w1; W(w, w) -= w1;
+	W(w, u) += w2; W(u, w) += w2; W(w, w) -= w2; W(u, u) -= w2;
+    }
+}
+
+void SpectralClustering::computeDescriptors() {
+    GeneralizedSelfAdjointEigenSolver<MatrixXd> es(W, A);
+    D = es.eigenvectors().block(0, 1, es.eigenvectors().rows(), nFeatures);
+
+    cout << "Eigenvalues of LB operator used in features :" << endl;
+    cout << es.eigenvalues().head(nFeatures) << endl;
+}
+
+/*
+  Perform k-means clustering on descriptor dataset.
+*/
+
+void initCentroids(MatrixXd &centroids, const MatrixXd &D) {
+    int k = centroids.rows();
+    int n = D.rows();
+    int nFeatures = D.cols();
+
+    srand(time(nullptr));
+    int r = rand() % k;
+    centroids.row(0) = D.row(r);
+
+    for (int j = 1; j < k; j++) {
+	vector<double> sqr_dist(n, numeric_limits<double>::max());
+	for (int i = 0; i < n; i++) {
+	    // squared distance to closest centroid
+	    for (int c = 0; c < j; c++) {
+		double cur_dist = (centroids.row(c) - D.row(i)).squaredNorm();
+		sqr_dist[i] = min(sqr_dist[i], cur_dist);
+	    }
+	}
+    }
+}
+
+void updatePartition(vector<int> &partition, const MatrixXd &centroids, const MatrixXd &D) {}
+
+void moveCentroids(MatrixXd &centroids, const vector<int> &partition, const MatrixXd &D) {}
+
+void SpectralClustering::computeClusters(int maxiter) {
+    clusters = vector<list<int> >(k);
+
+    MatrixXd centroids(k, nFeatures);
+    initCentroids(centroids, D);
+
+    int n = D.rows();
+    vector<int> partition(n, 0);
+    updatePartition(partition, centroids, D);
+
+    for (int i = 0; i < maxiter; i++) {
+	moveCentroids(centroids, partition, D);
+	updatePartition(partition, centroids, D);
+    }
+
+    for (int i = 0; i < n; i++) {
+	clusters[partition[i]].push_back(i);
+    }
+}

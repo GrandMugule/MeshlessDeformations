@@ -361,12 +361,6 @@ OPENGL_opengl_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libOpenGL.so
 //Path to a file.
 OPENGL_xmesa_INCLUDE_DIR:PATH=OPENGL_xmesa_INCLUDE_DIR-NOTFOUND
 
-//Value Computed by CMake
-Project_BINARY_DIR:STATIC=/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build
-
-//Value Computed by CMake
-Project_SOURCE_DIR:STATIC=/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations
-
 //Path to a library.
 RT_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/librt.so
 
@@ -554,12 +548,6 @@ X11_xf86misc_INCLUDE_PATH:PATH=X11_xf86misc_INCLUDE_PATH-NOTFOUND
 X11_xf86vmode_INCLUDE_PATH:PATH=/usr/include
 
 //Value Computed by CMake
-deformations_BINARY_DIR:STATIC=/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build
-
-//Value Computed by CMake
-deformations_SOURCE_DIR:STATIC=/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations
-
-//Value Computed by CMake
 glad_BINARY_DIR:STATIC=/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/glad
 
 //Dependencies for the target
@@ -570,6 +558,9 @@ glad_SOURCE_DIR:STATIC=/home/administrateur/Documents/Informatique/INF574/libigl
 
 //Dependencies for target
 glfw_LIB_DEPENDS:STATIC=
+
+//Dependencies for the target
+utils_LIB_DEPENDS:STATIC=general;igl::core;
 
 
 ########################
@@ -720,7 +711,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=4
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=6
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

@@ -56,16 +56,51 @@ CMAKE_BINARY_DIR = /home/administrateur/Documents/Informatique/INF574/projet/Mes
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
 
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
 
-.PHONY : rebuild_cache/fast
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
 
 # Special rule for the target edit_cache
 edit_cache:
@@ -77,6 +112,17 @@ edit_cache:
 edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
+
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/usr/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
+
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
+
+.PHONY : rebuild_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -111,6 +157,32 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named utils
+
+# Build rule for target.
+utils: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 utils
+.PHONY : utils
+
+# fast build rule for target.
+utils/fast:
+	$(MAKE) -f src/CMakeFiles/utils.dir/build.make src/CMakeFiles/utils.dir/build
+.PHONY : utils/fast
+
+#=============================================================================
+# Target rules for targets named testing
+
+# Build rule for target.
+testing: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 testing
+.PHONY : testing
+
+# fast build rule for target.
+testing/fast:
+	$(MAKE) -f animations/CMakeFiles/testing.dir/build.make animations/CMakeFiles/testing.dir/build
+.PHONY : testing/fast
+
+#=============================================================================
 # Target rules for targets named stretching
 
 # Build rule for target.
@@ -120,7 +192,7 @@ stretching: cmake_check_build_system
 
 # fast build rule for target.
 stretching/fast:
-	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/build
+	$(MAKE) -f animations/CMakeFiles/stretching.dir/build.make animations/CMakeFiles/stretching.dir/build
 .PHONY : stretching/fast
 
 #=============================================================================
@@ -149,137 +221,23 @@ glfw/fast:
 	$(MAKE) -f glfw/src/CMakeFiles/glfw.dir/build.make glfw/src/CMakeFiles/glfw.dir/build
 .PHONY : glfw/fast
 
-src/adjacency.o: src/adjacency.cpp.o
-
-.PHONY : src/adjacency.o
-
-# target to build an object file
-src/adjacency.cpp.o:
-	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/adjacency.cpp.o
-.PHONY : src/adjacency.cpp.o
-
-src/adjacency.i: src/adjacency.cpp.i
-
-.PHONY : src/adjacency.i
-
-# target to preprocess a source file
-src/adjacency.cpp.i:
-	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/adjacency.cpp.i
-.PHONY : src/adjacency.cpp.i
-
-src/adjacency.s: src/adjacency.cpp.s
-
-.PHONY : src/adjacency.s
-
-# target to generate assembly for a file
-src/adjacency.cpp.s:
-	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/adjacency.cpp.s
-.PHONY : src/adjacency.cpp.s
-
-src/integration.o: src/integration.cpp.o
-
-.PHONY : src/integration.o
-
-# target to build an object file
-src/integration.cpp.o:
-	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/integration.cpp.o
-.PHONY : src/integration.cpp.o
-
-src/integration.i: src/integration.cpp.i
-
-.PHONY : src/integration.i
-
-# target to preprocess a source file
-src/integration.cpp.i:
-	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/integration.cpp.i
-.PHONY : src/integration.cpp.i
-
-src/integration.s: src/integration.cpp.s
-
-.PHONY : src/integration.s
-
-# target to generate assembly for a file
-src/integration.cpp.s:
-	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/integration.cpp.s
-.PHONY : src/integration.cpp.s
-
-src/shapematching.o: src/shapematching.cpp.o
-
-.PHONY : src/shapematching.o
-
-# target to build an object file
-src/shapematching.cpp.o:
-	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/shapematching.cpp.o
-.PHONY : src/shapematching.cpp.o
-
-src/shapematching.i: src/shapematching.cpp.i
-
-.PHONY : src/shapematching.i
-
-# target to preprocess a source file
-src/shapematching.cpp.i:
-	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/shapematching.cpp.i
-.PHONY : src/shapematching.cpp.i
-
-src/shapematching.s: src/shapematching.cpp.s
-
-.PHONY : src/shapematching.s
-
-# target to generate assembly for a file
-src/shapematching.cpp.s:
-	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/shapematching.cpp.s
-.PHONY : src/shapematching.cpp.s
-
-src/stretching.o: src/stretching.cpp.o
-
-.PHONY : src/stretching.o
-
-# target to build an object file
-src/stretching.cpp.o:
-	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/stretching.cpp.o
-.PHONY : src/stretching.cpp.o
-
-src/stretching.i: src/stretching.cpp.i
-
-.PHONY : src/stretching.i
-
-# target to preprocess a source file
-src/stretching.cpp.i:
-	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/stretching.cpp.i
-.PHONY : src/stretching.cpp.i
-
-src/stretching.s: src/stretching.cpp.s
-
-.PHONY : src/stretching.s
-
-# target to generate assembly for a file
-src/stretching.cpp.s:
-	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/src/stretching.cpp.s
-.PHONY : src/stretching.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... rebuild_cache"
+	@echo "... install/strip"
+	@echo "... install"
+	@echo "... list_install_components"
+	@echo "... install/local"
 	@echo "... edit_cache"
+	@echo "... rebuild_cache"
+	@echo "... utils"
+	@echo "... testing"
 	@echo "... stretching"
 	@echo "... glad"
 	@echo "... glfw"
-	@echo "... src/adjacency.o"
-	@echo "... src/adjacency.i"
-	@echo "... src/adjacency.s"
-	@echo "... src/integration.o"
-	@echo "... src/integration.i"
-	@echo "... src/integration.s"
-	@echo "... src/shapematching.o"
-	@echo "... src/shapematching.i"
-	@echo "... src/shapematching.s"
-	@echo "... src/stretching.o"
-	@echo "... src/stretching.i"
-	@echo "... src/stretching.s"
 .PHONY : help
 
 

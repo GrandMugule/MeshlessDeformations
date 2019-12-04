@@ -20,10 +20,12 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/home/administrateur/Documents/Informatique/INF574/libigl/external/glfw/src/glfw3Config.cmake.in"
   "/home/administrateur/Documents/Informatique/INF574/libigl/external/glfw/src/glfw_config.h.in"
   "../CMakeLists.txt"
+  "../animations/CMakeLists.txt"
   "CMakeFiles/3.10.2/CMakeCCompiler.cmake"
   "CMakeFiles/3.10.2/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.10.2/CMakeSystem.cmake"
   "../cmake/FindLIBIGL.cmake"
+  "../src/CMakeLists.txt"
   "/usr/share/cmake-3.10/Modules/BasicConfigVersion-SameMajorVersion.cmake.in"
   "/usr/share/cmake-3.10/Modules/CMakeCInformation.cmake"
   "/usr/share/cmake-3.10/Modules/CMakeCXXInformation.cmake"
@@ -68,6 +70,8 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "/home/administrateur/Documents/Informatique/INF574/libigl/cmake/../external/.cache/glad/CMakeLists.txt"
   "/home/administrateur/Documents/Informatique/INF574/libigl/cmake/../external/.cache/glfw/CMakeLists.txt"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
+  "src/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "animations/CMakeFiles/CMakeDirectoryInformation.cmake"
   "glad/CMakeFiles/CMakeDirectoryInformation.cmake"
   "glfw/CMakeFiles/CMakeDirectoryInformation.cmake"
   "glfw/src/CMakeFiles/CMakeDirectoryInformation.cmake"
@@ -75,7 +79,9 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/stretching.dir/DependInfo.cmake"
+  "src/CMakeFiles/utils.dir/DependInfo.cmake"
+  "animations/CMakeFiles/testing.dir/DependInfo.cmake"
+  "animations/CMakeFiles/stretching.dir/DependInfo.cmake"
   "glad/CMakeFiles/glad.dir/DependInfo.cmake"
   "glfw/src/CMakeFiles/glfw.dir/DependInfo.cmake"
   )

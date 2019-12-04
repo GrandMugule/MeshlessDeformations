@@ -1,1 +1,0 @@
-/usr/bin/c++   -fPIC  -rdynamic CMakeFiles/ex_bin.dir/adjacency.cpp.o CMakeFiles/ex_bin.dir/integration.cpp.o CMakeFiles/ex_bin.dir/main.cpp.o CMakeFiles/ex_bin.dir/shapematching.cpp.o  -o ex_bin /usr/lib/x86_64-linux-gnu/libGL.so glad/libglad.a glfw/src/libglfw3.a -lrt -lm -ldl -lX11 -lpthread 

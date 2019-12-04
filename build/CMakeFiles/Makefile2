@@ -60,40 +60,155 @@ CMAKE_SOURCE_DIR = /home/administrateur/Documents/Informatique/INF574/projet/Mes
 CMAKE_BINARY_DIR = /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build
 
 #=============================================================================
-# Target rules for target CMakeFiles/stretching.dir
+# Directory level rules for directory src
+
+# Convenience name for "all" pass in the directory.
+src/all: src/CMakeFiles/utils.dir/all
+
+.PHONY : src/all
+
+# Convenience name for "clean" pass in the directory.
+src/clean: src/CMakeFiles/utils.dir/clean
+
+.PHONY : src/clean
+
+# Convenience name for "preinstall" pass in the directory.
+src/preinstall:
+
+.PHONY : src/preinstall
+
+#=============================================================================
+# Target rules for target src/CMakeFiles/utils.dir
 
 # All Build rule for target.
-CMakeFiles/stretching.dir/all: glad/CMakeFiles/glad.dir/all
-CMakeFiles/stretching.dir/all: glfw/src/CMakeFiles/glfw.dir/all
-	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/depend
-	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles --progress-num=20,21,22,23,24 "Built target stretching"
-.PHONY : CMakeFiles/stretching.dir/all
+src/CMakeFiles/utils.dir/all:
+	$(MAKE) -f src/CMakeFiles/utils.dir/build.make src/CMakeFiles/utils.dir/depend
+	$(MAKE) -f src/CMakeFiles/utils.dir/build.make src/CMakeFiles/utils.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles --progress-num=24,25,26,27,28 "Built target utils"
+.PHONY : src/CMakeFiles/utils.dir/all
 
 # Include target in all.
-all: CMakeFiles/stretching.dir/all
+all: src/CMakeFiles/utils.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/stretching.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles 24
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/stretching.dir/all
+src/CMakeFiles/utils.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles 5
+	$(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/utils.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles 0
-.PHONY : CMakeFiles/stretching.dir/rule
+.PHONY : src/CMakeFiles/utils.dir/rule
 
 # Convenience name for target.
-stretching: CMakeFiles/stretching.dir/rule
+utils: src/CMakeFiles/utils.dir/rule
+
+.PHONY : utils
+
+# clean rule for target.
+src/CMakeFiles/utils.dir/clean:
+	$(MAKE) -f src/CMakeFiles/utils.dir/build.make src/CMakeFiles/utils.dir/clean
+.PHONY : src/CMakeFiles/utils.dir/clean
+
+# clean rule for target.
+clean: src/CMakeFiles/utils.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Directory level rules for directory animations
+
+# Convenience name for "all" pass in the directory.
+animations/all: animations/CMakeFiles/testing.dir/all
+animations/all: animations/CMakeFiles/stretching.dir/all
+
+.PHONY : animations/all
+
+# Convenience name for "clean" pass in the directory.
+animations/clean: animations/CMakeFiles/testing.dir/clean
+animations/clean: animations/CMakeFiles/stretching.dir/clean
+
+.PHONY : animations/clean
+
+# Convenience name for "preinstall" pass in the directory.
+animations/preinstall:
+
+.PHONY : animations/preinstall
+
+#=============================================================================
+# Target rules for target animations/CMakeFiles/testing.dir
+
+# All Build rule for target.
+animations/CMakeFiles/testing.dir/all: src/CMakeFiles/utils.dir/all
+animations/CMakeFiles/testing.dir/all: glad/CMakeFiles/glad.dir/all
+animations/CMakeFiles/testing.dir/all: glfw/src/CMakeFiles/glfw.dir/all
+	$(MAKE) -f animations/CMakeFiles/testing.dir/build.make animations/CMakeFiles/testing.dir/depend
+	$(MAKE) -f animations/CMakeFiles/testing.dir/build.make animations/CMakeFiles/testing.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles --progress-num=22,23 "Built target testing"
+.PHONY : animations/CMakeFiles/testing.dir/all
+
+# Include target in all.
+all: animations/CMakeFiles/testing.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+animations/CMakeFiles/testing.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles 26
+	$(MAKE) -f CMakeFiles/Makefile2 animations/CMakeFiles/testing.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles 0
+.PHONY : animations/CMakeFiles/testing.dir/rule
+
+# Convenience name for target.
+testing: animations/CMakeFiles/testing.dir/rule
+
+.PHONY : testing
+
+# clean rule for target.
+animations/CMakeFiles/testing.dir/clean:
+	$(MAKE) -f animations/CMakeFiles/testing.dir/build.make animations/CMakeFiles/testing.dir/clean
+.PHONY : animations/CMakeFiles/testing.dir/clean
+
+# clean rule for target.
+clean: animations/CMakeFiles/testing.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target animations/CMakeFiles/stretching.dir
+
+# All Build rule for target.
+animations/CMakeFiles/stretching.dir/all: src/CMakeFiles/utils.dir/all
+animations/CMakeFiles/stretching.dir/all: glad/CMakeFiles/glad.dir/all
+animations/CMakeFiles/stretching.dir/all: glfw/src/CMakeFiles/glfw.dir/all
+	$(MAKE) -f animations/CMakeFiles/stretching.dir/build.make animations/CMakeFiles/stretching.dir/depend
+	$(MAKE) -f animations/CMakeFiles/stretching.dir/build.make animations/CMakeFiles/stretching.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles --progress-num=20,21 "Built target stretching"
+.PHONY : animations/CMakeFiles/stretching.dir/all
+
+# Include target in all.
+all: animations/CMakeFiles/stretching.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+animations/CMakeFiles/stretching.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles 26
+	$(MAKE) -f CMakeFiles/Makefile2 animations/CMakeFiles/stretching.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/build/CMakeFiles 0
+.PHONY : animations/CMakeFiles/stretching.dir/rule
+
+# Convenience name for target.
+stretching: animations/CMakeFiles/stretching.dir/rule
 
 .PHONY : stretching
 
 # clean rule for target.
-CMakeFiles/stretching.dir/clean:
-	$(MAKE) -f CMakeFiles/stretching.dir/build.make CMakeFiles/stretching.dir/clean
-.PHONY : CMakeFiles/stretching.dir/clean
+animations/CMakeFiles/stretching.dir/clean:
+	$(MAKE) -f animations/CMakeFiles/stretching.dir/build.make animations/CMakeFiles/stretching.dir/clean
+.PHONY : animations/CMakeFiles/stretching.dir/clean
 
 # clean rule for target.
-clean: CMakeFiles/stretching.dir/clean
+clean: animations/CMakeFiles/stretching.dir/clean
 
 .PHONY : clean
 

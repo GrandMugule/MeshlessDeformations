@@ -1,0 +1,16 @@
+#include <igl/opengl/glfw/Viewer.h>
+#include <igl/readOFF.h>
+
+#include "clustering.h"
+
+using namespace std;
+using namespace Eigen;
+
+MatrixXd V;
+MatrixXi F;
+
+int main(int argc, char *argv[]) {
+    igl::readOFF("../data/bunny.off", V, F);
+
+    SpectralClustering sc(V, F, 5);
+}

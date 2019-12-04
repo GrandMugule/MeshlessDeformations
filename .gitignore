@@ -1,0 +1,3 @@
+# exclude folders that depend on personnal computer configuration
+cmake/
+build/
