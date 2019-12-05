@@ -80,16 +80,6 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 		viewer.data().set_colors(C);
 		return true;
 	}
-	
-	if ((unsigned int)key == 1) {
-		std::cout << "One integration step" << std::endl;
-		I->performStep();
-		std::cout << I->currentPosition() << std::endl;
-		viewer.data().clear();
-		viewer.data().set_mesh(I->currentPosition(), F);
-		viewer.data().set_colors(C);
-		return true;
-	}
 	if ((unsigned int)key == 'U') {
 		std::cout << "Animation is running..." << std::endl;
 		I = new Integration(G, X0, 0.1, 0.1, SC->getClusters());
