@@ -14,14 +14,20 @@ list
 Eigen/Core
 -
 
+../src/clustering.h
+vector
+-
+list
+-
+Eigen/Core
+-
+
 ../src/integration.h
 Eigen/Core
 -
-Eigen/SVD
+vector
 -
-Eigen/Eigenvalues
--
-unsupported/Eigen/MatrixFunctions
+list
 -
 
 ../src/shapematching.h
@@ -2773,4 +2779,6 @@ integration.h
 /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/animations/integration.h
 adjacency.h
 /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/animations/adjacency.h
+clustering.h
+/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/animations/clustering.h
 

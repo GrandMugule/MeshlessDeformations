@@ -565,6 +565,7 @@ src/CMakeFiles/utils.dir/integration.cpp.o: /home/administrateur/Documents/Infor
 src/CMakeFiles/utils.dir/integration.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../external/eigen/unsupported/Eigen/src/MatrixFunctions/StemFunction.h
 src/CMakeFiles/utils.dir/integration.cpp.o: ../src/integration.cpp
 src/CMakeFiles/utils.dir/integration.cpp.o: ../src/integration.h
+src/CMakeFiles/utils.dir/integration.cpp.o: ../src/shapematching.h
 
 src/CMakeFiles/utils.dir/shapematching.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../external/eigen/Eigen/Cholesky
 src/CMakeFiles/utils.dir/shapematching.cpp.o: /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../external/eigen/Eigen/Core

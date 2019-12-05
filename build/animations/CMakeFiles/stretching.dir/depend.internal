@@ -3,6 +3,7 @@
 
 animations/CMakeFiles/stretching.dir/stretching.cpp.o
  ../src/adjacency.h
+ ../src/clustering.h
  ../src/integration.h
  ../src/shapematching.h
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../external/eigen/Eigen/Cholesky

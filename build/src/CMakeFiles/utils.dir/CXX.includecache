@@ -1215,15 +1215,17 @@ Eigen/Core
 /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/src/integration.cpp
 integration.h
 /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/src/integration.h
+shapematching.h
+/home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/src/shapematching.h
+iterator
+-
 
 /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/src/integration.h
 Eigen/Core
 -
-Eigen/SVD
+vector
 -
-Eigen/Eigenvalues
--
-unsupported/Eigen/MatrixFunctions
+list
 -
 
 /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/src/shapematching.cpp

@@ -566,6 +566,7 @@ src/CMakeFiles/utils.dir/integration.cpp.o
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../external/eigen/unsupported/Eigen/src/MatrixFunctions/StemFunction.h
  /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/src/integration.cpp
  /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/src/integration.h
+ /home/administrateur/Documents/Informatique/INF574/projet/MeshlessDeformations/src/shapematching.h
 src/CMakeFiles/utils.dir/shapematching.cpp.o
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../external/eigen/Eigen/Cholesky
  /home/administrateur/Documents/Informatique/INF574/libigl/cmake/../external/eigen/Eigen/Core

@@ -20,11 +20,11 @@ int main(int argc, char *argv[]) {
 
     int nClusters = 30;
     SpectralClustering sc(V, F, nClusters);
+    vector<list<int> > clusters = sc.getClusters();
     C = MatrixXd(V.rows(), 3);
     for (int i = 0; i < nClusters; i++) {
 	RowVector3d color = (RowVector3d::Random() + RowVector3d::Constant(1.)) / 2;
-	list<int> cluster = sc.getCluster(i);
-	for (list<int>::iterator it = cluster.begin(); it != cluster.end(); ++it) {
+	for (list<int>::iterator it = clusters[i].begin(); it != clusters[i].end(); ++it) {
 	    C.row(*it) = color;
 	}
     }

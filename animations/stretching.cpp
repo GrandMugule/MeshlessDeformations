@@ -9,6 +9,7 @@
 #include "shapematching.h"
 #include "integration.h"
 #include "adjacency.h"
+#include "clustering.h"
 
 using namespace Eigen; // to use the classes provided by Eigen library
 
@@ -16,6 +17,8 @@ using namespace Eigen; // to use the classes provided by Eigen library
 MatrixXd X0;
 MatrixXi F;
 Adjacency* A;
+SpectralClustering* SC;
+MatrixXd C; 
 
 // Elastic stretching
 MatrixXd X;
@@ -61,6 +64,7 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 		viewer.data().add_points(oldPoint, RowVector3d(1, 0, 0));
 		viewer.data().add_edges(oldPoint, newPoint, Eigen::RowVector3d(0, 0, 1));
 		viewer.data().set_mesh(G, F);
+		viewer.data().set_colors(C);
 		return true;
 	}
 	if ((unsigned int)key == 32) { //touche espace
@@ -70,24 +74,25 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 		    X.row(*it) += delta;
 		}
 		//update G
- 	        VectorXd W = VectorXd::Ones(X0.rows());
-	        G = ShapeMatching(X0, X, W, 0.5, Deformation::QUADRATIC).getMatch();
+	        G = ShapeMatching(X0, X, 0.5, Deformation::QUADRATIC).getMatch();
 		viewer.data().clear();
 		viewer.data().set_mesh(G, F);
+		viewer.data().set_colors(C);
 		return true;
 	}
 	
 	if ((unsigned int)key == 1) {
-		std::cout << "Etape integration" << std::endl;
+		std::cout << "One integration step" << std::endl;
 		I->performStep();
 		std::cout << I->currentPosition() << std::endl;
 		viewer.data().clear();
 		viewer.data().set_mesh(I->currentPosition(), F);
+		viewer.data().set_colors(C);
 		return true;
 	}
 	if ((unsigned int)key == 'U') {
-		std::cout << "Initialisation integration" << std::endl;
-		I = new Integration(G, X0, 0.1, 0.1);
+		std::cout << "Animation is running..." << std::endl;
+		I = new Integration(G, X0, 0.1, 0.1, SC->getClusters());
 		viewer.core().is_animating = true;
 		return true;
 	}
@@ -131,6 +136,7 @@ bool pre_draw(igl::opengl::glfw::Viewer& viewer) {
 	I->performStep();
 	viewer.data().clear();
 	viewer.data().set_mesh(I->currentPosition(), F);
+	viewer.data().set_colors(C);
     }
     return false;
 }
@@ -149,9 +155,27 @@ int main(int argc, char *argv[]) {
     //  print the number of mesh elements
     std::cout << "Vertices: " << X0.rows() << std::endl;
     std::cout << "Faces:    " << F.rows() << std::endl;
+    std::cout << std::endl;
 
     // initialize adjacency graph
+    std::cout << "Computing adjacency graph of input mesh..." << std::endl;
     A = new Adjacency(F, X0.rows());
+    std::cout << "Done" << std::endl;
+    std::cout << std::endl;
+
+    // perform clustering on initial shape and give a different colour to each cluster
+    std::cout << "Performing spectral clustering on input mesh..." << std::endl;
+    SC = new SpectralClustering(X0, F, 10);
+    std::cout << "Done" << std::endl;
+    std::cout << std::endl;
+    
+    C = MatrixXd(X0.rows(), 3);
+    for (vector<list<int> >::iterator c = SC->getClusters().begin(); c != SC->getClusters().end(); ++c) {
+	RowVector3d color = (RowVector3d::Random() + RowVector3d::Constant(1.)) / 2;
+	for (list<int>::iterator v = c->begin(); v != c->end(); ++v) {
+	    C.row(*v) = color;
+	}
+    }
 
     // elastic stretching matrices
     X = X0;
@@ -164,5 +188,6 @@ int main(int argc, char *argv[]) {
     viewer.core().is_animating = false;
     viewer.callback_pre_draw = &pre_draw; // to perform animation steps
     viewer.data().set_mesh(G, F); // load a face-based representation of the input 3d shape
+    viewer.data().set_colors(C);
     viewer.launch(); // run the editor
 }

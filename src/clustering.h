@@ -12,7 +12,7 @@ class SpectralClustering {
     SpectralClustering(const MatrixXd &X, const MatrixXi &F, int _k, int _nFeatures = 5);
     ~SpectralClustering(){}
 
-    list<int>& getCluster(int i){return clusters[i];}
+    vector<list<int> >& getClusters(){return clusters;}
 
  private:
     // Laplace-Beltrami operator
