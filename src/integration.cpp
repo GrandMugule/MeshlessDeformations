@@ -31,27 +31,38 @@ void Integration::performStep(float lambda) {
     // match current shape with objective shape
     ShapeMatching sm(X, Xf, 0.5, Deformation::QUADRATIC);
     V += alpha * (sm.getMatch() - X) / h;
+	if (!clusters.empty()) {
+		// match clusters with objective shape
+		for (vector<list<int> >::iterator c = clusters.begin(); c != clusters.end(); ++c) {
+			if (c->empty()) continue;
 
-    // match clusters with objective shape
-    for (vector<list<int> >::iterator c = clusters.begin(); c != clusters.end(); ++c) {
-	if (c->empty()) continue;
-	
-	MatrixXd Xc(c->size(), 3);
-	MatrixXd Xfc(c->size(), 3);
-	int i = 0;
-	for (list<int>::iterator v = c->begin(); v != c->end(); ++v) {
-	    Xc.row(i) = X.row(*v);
-	    Xfc.row(i) = Xf.row(*v);
-	    i++;
-	}
-	
-	ShapeMatching sm(Xc, Xfc, 0.5, Deformation::LINEAR);
-	i = 0;
-	for (list<int>::iterator v = c->begin(); v != c->end(); ++v) {
-	    V.row(*v) += alpha * (sm.getMatch().row(i) - Xc.row(i)) / h;
-	}
-    }
+			MatrixXd Xc(c->size(), 3);
+			MatrixXd Xfc(c->size(), 3);
+			int i = 0;
 
+			for (list<int>::iterator v = c->begin(); v != c->end(); ++v) {
+				Xc.row(i) = X.row(*v);
+				Xfc.row(i) = Xf.row(*v);
+				i++;
+			}
+
+			ShapeMatching sm(Xc, Xfc, 0.5, Deformation::LINEAR);
+			i = 0;
+			for (list<int>::iterator v = c->begin(); v != c->end(); ++v) {
+				V.row(*v) += alpha * (sm.getMatch().row(i) - Xc.row(i)) / h;
+			}
+		}
+	}
     // update positions
     X += h * V;
+}
+
+void Integration::check_ground(int axe, double sol) {
+	for (int i = 0; i < X.rows(); i++) {
+		if (X(i,axe) < sol) {
+			std::cout << "Touche le sol" << std::endl;
+			X(i,axe) = sol;
+			V(i,axe) = 0.05 * abs(V(i,axe));
+		}
+	}
 }
