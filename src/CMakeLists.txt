@@ -1,5 +1,5 @@
 add_library(utils
-	SHARED
+	STATIC
 	adjacency.cpp clustering.cpp integration.cpp shapematching.cpp)
 
 target_link_libraries(utils igl::core)

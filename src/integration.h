@@ -14,6 +14,7 @@ class Integration {
     ~Integration(){}
 
     void performStep(float lambda = 0.9);
+	void check_ground(int axe, double sol);
     MatrixXd& currentPosition(){ return X; }
 
  private:

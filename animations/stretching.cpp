@@ -80,10 +80,16 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 		viewer.data().set_colors(C);
 		return true;
 	}
-	if ((unsigned int)key == 'U') {
+	if ((unsigned int)key == 'D') {
 		std::cout << "Animation is running..." << std::endl;
 		I = new Integration(G, X0, 0.1, 0.1, SC->getClusters());
 		viewer.core().is_animating = true;
+		return true;
+	}
+	if ((unsigned int)key == 'S') {
+		std::cout << "Fin integration" << std::endl;
+		G = I->currentPosition();
+		viewer.core().is_animating = false;
 		return true;
 	}
 
@@ -135,8 +141,9 @@ bool pre_draw(igl::opengl::glfw::Viewer& viewer) {
 
 int main(int argc, char *argv[]) {
     // initialize input mesh
+
     if (argc < 2) {
-        igl::readOFF("../data/bunny.off", X0, F);
+        igl::readOFF("../../data/bunny.off", X0, F);
     }
     else {
         igl::readOFF(argv[1], X0, F);
