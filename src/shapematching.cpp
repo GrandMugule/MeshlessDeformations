@@ -1,22 +1,27 @@
 #include "shapematching.h"
 
+using namespace std;
 using namespace Eigen;
 
 /*
-  Constructors and destructor.
+  Constructors, destructor and getters
 */
 
 ShapeMatching::~ShapeMatching() {
     delete G;
+    delete P;
 }
 
 ShapeMatching::ShapeMatching(MatrixXd &_X0, MatrixXd &_X)
     : X0(_X0), X(_X)
 {
     beta = 0.;
+    method = Deformation::RIGID;
 
     int n = X0.rows();
     G = new MatrixXd(n, 3);
+
+    P = new MatrixXd(3, 3);
 
     linearDeformation();
 }
@@ -25,9 +30,12 @@ ShapeMatching::ShapeMatching(MatrixXd &_X0, MatrixXd &_X, float _beta, Deformati
     : X0(_X0), X(_X)
 {
     beta = _beta;
+    method = _method;
 
     int n = X0.rows();
     G = new MatrixXd(n, 3);
+
+    P = new MatrixXd(3, 3);
     
     switch (method) {
     case (Deformation::LINEAR) :
@@ -39,6 +47,17 @@ ShapeMatching::ShapeMatching(MatrixXd &_X0, MatrixXd &_X, float _beta, Deformati
     default :
 	std::cout << "This deformation doesn't exist" << std::endl;
     }
+}
+
+MatrixXd ShapeMatching::getMatch(){
+    return *G;
+}
+
+MatrixXd ShapeMatching::getPureDeformation(){
+    if (method != Deformation::LINEAR) {
+        cout << "Method not LINEAR, pure deformation not defined !"
+    }
+    return *P;
 }
 
 /*
@@ -66,10 +85,13 @@ void ShapeMatching::linearDeformation() {
     MatrixXd A = Apq * Aqq.inverse();
     MatrixXd S = (Apq.transpose() * Apq).sqrt();
     MatrixXd R = Apq * S.inverse();
+    
     MatrixXd L = (beta * A) + ((1 - beta) * R);
     for (int i = 0; i < n; i++) {
 	G->row(i) = xcm + ((X0.row(i) - x0cm) * L.transpose());
     }
+
+    *P = S * Aqq.inverse();
 }
 
 void ShapeMatching::quadraticDeformation() {

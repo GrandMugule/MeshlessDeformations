@@ -9,6 +9,7 @@
 using namespace Eigen;
 
 enum class Deformation {
+    RIGID,
     LINEAR,
     QUADRATIC
 };
@@ -16,22 +17,27 @@ enum class Deformation {
 class ShapeMatching {
 public:
     // Constructor without beta performs rigid matching
-    ShapeMatching(MatrixXd &_X0, MatrixXd &_X, float _beta, Deformation method);
+    ShapeMatching(MatrixXd &_X0, MatrixXd &_X, float _beta, Deformation _method);
     ShapeMatching(MatrixXd &_X0, MatrixXd &_X);
     ~ShapeMatching();
 
-    MatrixXd getMatch(){ return *G; }
+    MatrixXd getMatch();
+    MatrixXd getPureDeformation();
 
 private:
     // Input
     MatrixXd& X0;
     MatrixXd& X;
     float beta;
+    Deformation method;
 
-    // Output (still lacks plasticity matrix S)
+    // Output
     MatrixXd* G;
 
-    // Deformations
+    // Pure deformation (not defined in the quadratic case)
+    MatrixXd* P;
+
+    // Deformation methods
     void linearDeformation();
     void quadraticDeformation();
 };
