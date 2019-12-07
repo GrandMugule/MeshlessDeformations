@@ -1,5 +1,6 @@
 #include "integration.h"
 #include "shapematching.h"
+#include <map>
 
 #include <iterator>
 
@@ -66,3 +67,42 @@ void Integration::check_ground(int axe, double sol) {
 		}
 	}
 }
+
+bool Integration::check_box(std::map<string,double> box, double amortissement) {
+	bool contact = false;
+	for (int i = 0; i < X.rows(); i++) {
+		if (X(i, 0) <= box["x_min"]) {
+			X(i, 0) = box["x_min"];
+			V(i,0) = - amortissement *V(i,0);
+			contact = true;
+		}
+		if (X(i, 1) <= box["y_min"]) {
+			X(i, 1) = box["y_min"];
+			V(i, 1) = - amortissement *V(i, 1); 
+			contact = true;
+		}
+		if (X(i, 2) <= box["z_min"]) {
+			X(i, 2) = box["z_min"];
+			V(i, 2) = - amortissement * V(i, 2);
+			contact = true;
+		}
+		if (X(i, 0) >= box["x_max"]) {
+			X(i, 0) = box["x_max"];
+			V(i, 0) = - amortissement * V(i, 0);
+			contact = true;
+		}
+		if (X(i, 1) >= box["y_max"]) {
+			X(i, 1) = box["y_max"];
+			V(i, 1) = - amortissement * V(i, 1);
+			contact = true;
+		}
+		if (X(i, 2) >= box["z_max"]) {
+			X(i, 2) = box["z_max"];
+			V(i, 2) = - amortissement * V(i, 2);
+			contact = true;
+		}
+
+	}
+	return contact;
+}
+
