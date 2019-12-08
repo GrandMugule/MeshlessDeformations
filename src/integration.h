@@ -15,6 +15,7 @@ class Integration {
     ~Integration(){}
 
     void performStep(float lambda = 0.9);
+	void performStep_gravity(float lambda = 0.9);
 	void check_ground(int axe, double sol);
 	bool check_box(std::map<string, double> box, double amortissement);
 	void change_destination(MatrixXd& new_Xf) { Xf = new_Xf; }
