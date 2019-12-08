@@ -26,7 +26,7 @@ ShapeMatching::ShapeMatching(MatrixXd &_X0, MatrixXd &_X)
     linearDeformation();
 }
 
-ShapeMatching::ShapeMatching(MatrixXd &_X0, MatrixXd &_X, float _beta, Deformation method)
+ShapeMatching::ShapeMatching(MatrixXd &_X0, MatrixXd &_X, float _beta, Deformation _method)
     : X0(_X0), X(_X)
 {
     beta = _beta;
@@ -55,7 +55,7 @@ MatrixXd ShapeMatching::getMatch(){
 
 MatrixXd ShapeMatching::getPureDeformation(){
     if (method != Deformation::LINEAR) {
-        cout << "Method not LINEAR, pure deformation not defined !"
+		cout << "Method not LINEAR, pure deformation not defined !";
     }
     return *P;
 }
