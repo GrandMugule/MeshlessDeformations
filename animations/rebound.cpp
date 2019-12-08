@@ -89,6 +89,12 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
 	if ((unsigned int)key == 'D') {
 		std::cout << "Animation is running..." << std::endl;
 		vector<list<int> > vectorNull;
+		if (vectorNull.empty()) {
+			std::cout << "Cluster vide" << std::endl;
+		}
+		else {
+			std::cout << "Cluster non vide" << std::endl;
+		}
 		I = new Integration(G, Xf, 0.1, 0.001, vectorNull);
 		viewer.core().is_animating = true;
 		return true;
@@ -120,7 +126,7 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
 
 bool pre_draw(igl::opengl::glfw::Viewer& viewer) {
 	if (viewer.core().is_animating) {
-		I->performStep();
+		I->performStep_gravity();
 		viewer.data().clear();
 		view_box(viewer);
 		viewer.data().set_mesh(I->currentPosition(), F);
