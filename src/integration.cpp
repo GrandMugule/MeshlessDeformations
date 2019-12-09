@@ -1,81 +1,108 @@
 #include "integration.h"
 #include "shapematching.h"
-#include <map>
 
 #include <iterator>
+#include <cassert>
 
+using namespace std;
 using namespace Eigen;
 
 /*
-  Constructor and destructor.
+  Constructor and setters.
 */
 
-Integration::Integration(MatrixXd _Xi, MatrixXd &_Xf, float _h, float _alpha, vector<list<int> >&_clusters)
-    : Xf(_Xf), clusters(_clusters)
-{
+Integration::Integration(MatrixXd& _Xi, MatrixXd& _Xf, float _h, float _alpha, Feature _method){
+    Xf = _Xf;
     h = _h;
     alpha = _alpha;
+    method = _method;
 
     int n = _Xi.rows();
     X = _Xi;
     V = MatrixXd::Zero(n, 3);
+    ShapeMatching sm(X, Xf, 0.5, Deformation::QUADRATIC);
+    G = sm.getMatch();
+}
+
+void Integration::setGravity(float g){
+    assert(method == Feature::GRAVITY);
+    gravity = g;
+}
+
+void Integration::setClusters(vector<list<int> >& _clusters){
+    assert(method == Feature::CLUSTERS);
+    assert(!_clusters.empty());
+    clusters = _clusters;
 }
 
 /*
   Integration scheme.
 */
 
-void Integration::performStep(float lambda) {
-    // loss of energy at each step so that the movement eventually stabilizes
+void Integration::performStep(float lambda){
+    switch(method){
+    case (Feature::NONE):
+	perform_step(lambda);
+	break;
+    case (Feature::GRAVITY):
+	perform_step_gravity(lambda);
+	break;
+    case (Feature::CLUSTERS):
+	perform_step_clusters(lambda);
+	break;
+    default:
+	cout << "Integration error" << endl;
+    }
+}
+
+void Integration::perform_step(float lambda){
     V *= lambda;
-
-    // match current shape with objective shape
-    ShapeMatching sm(X, Xf, 0.5, Deformation::QUADRATIC);
-    V += alpha * (sm.getMatch() - X) / h;
-
-	
-	if (!clusters.empty()) {
-		// match clusters with objective shape
-		for (vector<list<int> >::iterator c = clusters.begin(); c != clusters.end(); ++c) {
-			if (c->empty()) continue;
-
-			MatrixXd Xc(c->size(), 3);
-			MatrixXd Xfc(c->size(), 3);
-			int i = 0;
-
-			for (list<int>::iterator v = c->begin(); v != c->end(); ++v) {
-				Xc.row(i) = X.row(*v);
-				Xfc.row(i) = Xf.row(*v);
-				i++;
-			}
-
-			ShapeMatching sm(Xc, Xfc, 0.5, Deformation::LINEAR);
-			i = 0;
-			for (list<int>::iterator v = c->begin(); v != c->end(); ++v) {
-				V.row(*v) += alpha * (sm.getMatch().row(i) - Xc.row(i)) / h;
-			}
-		}
-	}
-	
-    // update positions
+    V += alpha * (G - X) / h;
+    
     X += h * V;
 }
 
-void Integration::performStep_gravity(float lambda) {
-	// loss of energy at each step so that the movement eventually stabilizes
-	V *= lambda;
-
-	// match current shape with objective shape
-	ShapeMatching sm(X, Xf, 0.5, Deformation::QUADRATIC);
-	V += alpha * (sm.getMatch() - X) / h;
-
-	//add gravity
-	for (int i = 0; i < V.rows(); i++) {
-		V.row(i) += RowVector3d(0, -0.01, 0);
-	}
-	// update positions
-	X += h * V;
+void Integration::perform_step_gravity(float lambda){
+    V *= lambda;
+    V += alpha * (G - X) / h;
+    
+    for (int i = 0; i < V.rows(); i++) {
+	V.row(i) -= gravity * RowVector3d(0., 1., 0.);
+    }
+    
+    X += h * V;
 }
+
+void Integration::perform_step_clusters(float lambda){
+    V *= lambda;
+    V += alpha * (G - X) / h;
+
+    for (vector<list<int> >::iterator c = clusters.begin(); c != clusters.end(); ++c){
+	if (c->empty()) continue;
+
+	MatrixXd Xc(c->size(), 3);
+	MatrixXd Xfc(c->size(), 3);
+	int i = 0;
+
+	for (list<int>::iterator v = c->begin(); v != c->end(); v++) {
+	    Xc.row(i) = X.row(*v);
+	    Xfc.row(i) = Xf.row(*v);
+	    i++;
+	}
+
+	ShapeMatching sm(Xc, Xfc, 0.5, Deformation::LINEAR);
+	i = 0;
+	for (list<int>::iterator v = c->begin(); v != c->end(); ++v) {
+	    V.row(*v) += alpha * (sm.getMatch().row(i) - Xc.row(i)) / h;
+	}
+    }
+
+    X += h * V;
+}
+
+/*
+  Other methods.
+*/
 
 void Integration::check_ground(int axe, double sol) {
 	for (int i = 0; i < X.rows(); i++) {

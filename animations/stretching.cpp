@@ -11,14 +11,23 @@
 #include "adjacency.h"
 #include "clustering.h"
 
+#include <string>
+#include <cassert>
+
+using namespace std;
 using namespace Eigen; // to use the classes provided by Eigen library
 
 // Initial mesh
 MatrixXd X0;
 MatrixXi F;
-Adjacency* A;
-SpectralClustering* SC;
-MatrixXd C; 
+Adjacency* A = nullptr;
+MatrixXd C;
+
+// the user can specify these parameters
+SpectralClustering* SC = nullptr;
+float alpha = 0.1;
+float beta = 0.5;
+float step = 0.1;
 
 // Elastic stretching
 MatrixXd X;
@@ -28,7 +37,60 @@ list<int> currentNeighborhood;
 MatrixXd G;
 
 // Integration scheme
-Integration* I;
+Integration* I = nullptr;
+
+
+void init_data(int argc, char *argv[]){
+    assert(argc > 1);
+    
+    // input mesh and its adjacency graph
+    igl::readOFF(argv[1], X0, F);
+    cout << "Vertices : " << X0.rows() << endl;
+    cout << "Faces : " << F.rows() << endl << endl;
+    A = new Adjacency(F, X0.rows());
+
+    // parse input
+    for (int i = 2; i < argc; i += 2) {
+	string s(argv[i]); string t(argv[i+1]);
+	if (s.compare("--clusters") == 0){
+	    SC = new SpectralClustering(X0, F, stoi(t));
+	    continue;
+	}
+	if (s.compare("--alpha") == 0){
+	    alpha = stof(t);
+	    continue;
+	}
+	if (s.compare("--beta") == 0){
+	    beta = stof(t);
+	    continue;
+	}
+	if (s.compare("--step") == 0){
+	    step = stof(t);
+	    continue;
+	}
+    }
+
+    // set color
+    C = MatrixXd(X0.rows(), 3);
+    if (SC == nullptr) {
+	for (int i = 0; i < C.rows(); i++) {
+	    C.row(i) << 1.0, 1.0, 0.0;
+	}
+    }
+    else {
+	for (vector<list<int> >::iterator c = SC->getClusters().begin(); c != SC->getClusters().end(); ++c) {
+	    if (c->empty()) continue;
+	    RowVector3d color = (RowVector3d::Random() + RowVector3d::Constant(1.)) / 2;
+	    for (list<int>::iterator v = c->begin(); v != c->end(); ++v) {
+		C.row(*v) = color;
+	    }
+	}
+    }
+
+    X = X0;
+    G = X0;
+}
+
 
 bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier) {
     std::cout << "pressed Key: " << key << " " << (unsigned int)key << std::endl;
@@ -74,15 +136,21 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 		    X.row(*it) += delta;
 		}
 		//update G
-	        G = ShapeMatching(X0, X, 0.5, Deformation::QUADRATIC).getMatch();
+	        G = ShapeMatching(X0, X, beta, Deformation::QUADRATIC).getMatch();
 		viewer.data().clear();
 		viewer.data().set_mesh(G, F);
 		viewer.data().set_colors(C);
 		return true;
 	}
 	if ((unsigned int)key == 'D') {
+	    if (SC == nullptr) {
+		I = new Integration(G, X0, step, alpha);
+	    }
+	    else {
+		I = new Integration(G, X0, step, alpha, Feature::CLUSTERS);
+		I->setClusters(SC->getClusters());
+	    }
 		std::cout << "Animation is running..." << std::endl;
-		I = new Integration(G, X0, 0.1, 0.1, SC->getClusters());
 		viewer.core().is_animating = true;
 		return true;
 	}
@@ -140,43 +208,7 @@ bool pre_draw(igl::opengl::glfw::Viewer& viewer) {
 
 
 int main(int argc, char *argv[]) {
-    // initialize input mesh
-
-    if (argc < 2) {
-        igl::readOFF("../../data/bunny.off", X0, F);
-    }
-    else {
-        igl::readOFF(argv[1], X0, F);
-    }
-
-    //  print the number of mesh elements
-    std::cout << "Vertices: " << X0.rows() << std::endl;
-    std::cout << "Faces:    " << F.rows() << std::endl;
-    std::cout << std::endl;
-
-    // initialize adjacency graph
-    std::cout << "Computing adjacency graph of input mesh..." << std::endl;
-    A = new Adjacency(F, X0.rows());
-    std::cout << "Done" << std::endl;
-    std::cout << std::endl;
-
-    // perform clustering on initial shape and give a different colour to each cluster
-    std::cout << "Performing spectral clustering on input mesh..." << std::endl;
-    SC = new SpectralClustering(X0, F, 10);
-    std::cout << "Done" << std::endl;
-    std::cout << std::endl;
-    
-    C = MatrixXd(X0.rows(), 3);
-    for (vector<list<int> >::iterator c = SC->getClusters().begin(); c != SC->getClusters().end(); ++c) {
-	RowVector3d color = (RowVector3d::Random() + RowVector3d::Constant(1.)) / 2;
-	for (list<int>::iterator v = c->begin(); v != c->end(); ++v) {
-	    C.row(*v) = color;
-	}
-    }
-
-    // elastic stretching matrices
-    X = X0;
-    G = X0;
+    init_data(argc, argv);
 
     // initialize viewer
     igl::opengl::glfw::Viewer viewer; // create the 3d viewer
