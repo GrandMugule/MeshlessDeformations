@@ -15,7 +15,12 @@
 #include <cassert>
 
 using namespace std;
-using namespace Eigen; // to use the classes provided by Eigen library
+using namespace Eigen;
+
+
+/*
+  Global variables.
+*/
 
 // Initial mesh
 MatrixXd X0;
@@ -40,6 +45,10 @@ MatrixXd G;
 Integration* I = nullptr;
 
 
+/*
+  Parse input command line to initialize global variables.
+*/
+
 void init_data(int argc, char *argv[]){
     assert(argc > 1);
     
@@ -48,6 +57,10 @@ void init_data(int argc, char *argv[]){
     cout << "Vertices : " << X0.rows() << endl;
     cout << "Faces : " << F.rows() << endl << endl;
     A = new Adjacency(F, X0.rows());
+
+    // rescale intput mesh
+    double scale = (X0.colwise().maxCoeff() - X0.colwise().minCoeff()).norm();
+    X0 *= 10 / scale;
 
     // parse input
     for (int i = 2; i < argc; i += 2) {
@@ -92,81 +105,12 @@ void init_data(int argc, char *argv[]){
 }
 
 
-bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier) {
-    std::cout << "pressed Key: " << key << " " << (unsigned int)key << std::endl;
-	if (key == 'X') {
-		axe = 0;
-		std::cout << "modification axe : " << key << " " << (unsigned int)key << std::endl;
-		return true;
-	}
-	if (key == 'Y') {
-		axe = 1;
-		std::cout << "modification axe : " << key << " " << (unsigned int)key << std::endl;
-		return true;
-	}
-	if (key == 'Z') {
-		axe = 2;
-		std::cout << "modification axe : " << key << " " << (unsigned int)key << std::endl;
-		return true;
-	}
-	if ((unsigned int)key == 6 || (unsigned int)key == 7) { //6 : touche fleche de droite, 7 : touche fleche de gauche
-		RowVector3d oldPoint = G.row(currentVertex);
-		RowVector3d newPoint = X.row(currentVertex);
-		if ((unsigned int)key == 6) { //fleche de droite
-		        newPoint(axe) += 0.1;
-			std::cout << "offset : " << 0.1 << " " << std::endl;
-		}
-		else {
-		        newPoint(axe) -= 0.1;
-			std::cout << "offset : " << -0.1 << " " << std::endl;
-		}
-		X.row(currentVertex) = newPoint;
-		viewer.data().clear();
-		viewer.data().add_points(newPoint, RowVector3d(0, 1, 0));
-		viewer.data().add_points(oldPoint, RowVector3d(1, 0, 0));
-		viewer.data().add_edges(oldPoint, newPoint, Eigen::RowVector3d(0, 0, 1));
-		viewer.data().set_mesh(G, F);
-		viewer.data().set_colors(C);
-		return true;
-	}
-	if ((unsigned int)key == 32) { //touche espace
-	        // update all vertices in neighborhood
-	        RowVector3d delta = X.row(currentVertex) - G.row(currentVertex);
-	        for (list<int>::iterator it = currentNeighborhood.begin(); it != currentNeighborhood.end(); ++it) {
-		    X.row(*it) += delta;
-		}
-		//update G
-	        G = ShapeMatching(X0, X, beta, Deformation::QUADRATIC).getMatch();
-		viewer.data().clear();
-		viewer.data().set_mesh(G, F);
-		viewer.data().set_colors(C);
-		return true;
-	}
-	if ((unsigned int)key == 'D') {
-	    if (SC == nullptr) {
-		I = new Integration(G, X0, step, alpha);
-	    }
-	    else {
-		I = new Integration(G, X0, step, alpha, Feature::CLUSTERS);
-		I->setClusters(SC->getClusters());
-	    }
-		std::cout << "Animation is running..." << std::endl;
-		viewer.core().is_animating = true;
-		return true;
-	}
-	if ((unsigned int)key == 'S') {
-		std::cout << "Fin integration" << std::endl;
-		G = I->currentPosition();
-		viewer.core().is_animating = false;
-		return true;
-	}
-
-
-
-    return false;
-}
-
-
+/*
+  Callbacks : 
+  - mouse_down is used to select a vertex
+  - kew_down is used to move the selected vertex and start/stop the animation
+  - pre_draw is called when animation is launched to perform steps in the integration scheme.
+*/
 
 bool mouse_down(igl::opengl::glfw::Viewer& viewer, int button, int modifier) {
     int fid, vid;
@@ -193,7 +137,74 @@ bool mouse_down(igl::opengl::glfw::Viewer& viewer, int button, int modifier) {
     return false;
 }
 
-
+bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier) {
+    std::cout << "pressed Key: " << key << " " << (unsigned int)key << std::endl;
+    if (key == '1') {
+	axe = 0;
+	cout << "modification axe : " << key << " " << (unsigned int)key << endl;
+	return true;
+    }
+    if (key == '2') {
+	axe = 1;
+	cout << "modification axe : " << key << " " << (unsigned int)key << endl;
+        return true;
+    }
+    if (key == '3') {
+	axe = 2;
+	cout << "modification axe : " << key << " " << (unsigned int)key << endl;
+	return true;
+    }
+    if ((unsigned int)key == 6 || (unsigned int)key == 7) { //6 : touche fleche de droite, 7 : touche fleche de gauche
+	RowVector3d oldPoint = G.row(currentVertex);
+	RowVector3d newPoint = X.row(currentVertex);
+	if ((unsigned int)key == 6) { //fleche de droite
+	    newPoint(axe) += 0.1;
+	}
+	else {
+	    newPoint(axe) -= 0.1;
+	}
+	X.row(currentVertex) = newPoint;
+	viewer.data().clear();
+	viewer.data().add_points(newPoint, RowVector3d(0, 1, 0));
+	viewer.data().add_points(oldPoint, RowVector3d(1, 0, 0));
+	viewer.data().add_edges(oldPoint, newPoint, Eigen::RowVector3d(0, 0, 1));
+	viewer.data().set_mesh(G, F);
+	viewer.data().set_colors(C);
+	return true;
+    }
+    if ((unsigned int)key == 32) { //touche espace
+        // update all vertices in neighborhood
+        RowVector3d delta = X.row(currentVertex) - G.row(currentVertex);
+        for (list<int>::iterator it = currentNeighborhood.begin(); it != currentNeighborhood.end(); ++it) {
+	    X.row(*it) += delta;
+	}
+	//update G
+        G = ShapeMatching(X0, X, beta, Deformation::QUADRATIC).getMatch();
+	viewer.data().clear();
+	viewer.data().set_mesh(G, F);
+	viewer.data().set_colors(C);
+	return true;
+    }
+    if ((unsigned int)key == 'D') {
+    if (SC == nullptr) {
+	I = new Integration(G, X0, step, alpha);
+    }
+    else {
+	I = new Integration(G, X0, step, alpha, Feature::CLUSTERS);
+	I->setClusters(SC->getClusters());
+    }
+    cout << "Animation is running..." << endl;
+    viewer.core().is_animating = true;
+    return true;
+    }
+    if ((unsigned int)key == 'S') {
+	std::cout << "Animation stopped" << std::endl;
+	G = I->currentPosition();
+	viewer.core().is_animating = false;
+	return true;
+    }
+    return false;
+}
 
 bool pre_draw(igl::opengl::glfw::Viewer& viewer) {
     if (viewer.core().is_animating) {
@@ -206,6 +217,9 @@ bool pre_draw(igl::opengl::glfw::Viewer& viewer) {
 }
 
 
+/*
+  Main function.
+*/
 
 int main(int argc, char *argv[]) {
     init_data(argc, argv);
