@@ -33,20 +33,44 @@ Integration* I;
 
 //Rebound
 bool contact = false;
-double amortissement = 0.05;
+bool previous_contact = false;
+double amortissement = 0.9;
+double epsilon = 0.05;
 map<string, double> box;
+RowVector3d PointXf;
+int face_destination = 0;
+int etape = 0;
 
 void random_destination() {
-	double x = (rand() % 2) * (box["x_max"] - box["x_min"]) + box["x_min"];
-	std::cout << "x : " << x << std::endl;
-	double y = (rand() % 2) * (box["y_max"] - box["y_min"]) + box["y_min"];
-	double z = (rand() % 2) * (box["z_max"] - box["z_min"]) + box["z_min"];
-	RowVector3d newPoint(x, y, z);
-	RowVector3d xfcm = Xf.colwise().mean();
-	RowVector3d translation = newPoint - xfcm;
-	for (int i = 0; i < Xf.rows(); i++) {
-		Xf.row(i) += translation;
+	
+	int random = rand() % 2 +1;
+	face_destination = (face_destination + random) % 3;
+	PointXf(face_destination)= 1.5* (rand() % 2) * (box["x_max"] -box["x_min"]) + box["x_min"];
+	PointXf((face_destination+1)%3) = (box["x_max"] + box["x_min"]) /2. ;
+	PointXf((face_destination + 2) % 3) = (box["x_max"] + box["x_min"]) /2.;
+	/*
+	PointXf((face_destination + 1) % 3) = (box["x_max"] + box["x_min"]) / 2.;
+	PointXf((face_destination + 2) % 3) = (box["x_max"] + box["x_min"]) / 2.;
+	if (etape % 2 == 0) {
+		PointXf(face_destination) = 1.5 * box["x_max"];
 	}
+	else {
+		PointXf(face_destination) = 1.5 * box["x_min"];
+	}
+	etape += 1;
+	*/
+	RowVector3d xfcm = Xf.colwise().mean();
+	MatrixXd Rotation(3, 3);
+	Rotation = Matrix3d::Zero();
+	Rotation(face_destination, face_destination) = 1.;
+	Rotation((face_destination+2)%3, (face_destination +1) % 3) = 1.;
+	Rotation((face_destination+1) % 3, (face_destination +2) % 3) = - 1.;
+	for (int i = 0; i < Xf.rows(); i++) {
+		Xf.row(i) -= xfcm;
+		Xf.row(i) = Xf.row(i) * Rotation.transpose();
+		Xf.row(i) += PointXf;
+	}
+
 }
 
 void view_box(igl::opengl::glfw::Viewer & viewer) {
@@ -88,14 +112,7 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
 
 	if ((unsigned int)key == 'D') {
 		std::cout << "Animation is running..." << std::endl;
-		vector<list<int> > vectorNull;
-		if (vectorNull.empty()) {
-			std::cout << "Cluster vide" << std::endl;
-		}
-		else {
-			std::cout << "Cluster non vide" << std::endl;
-		}
-		I = new Integration(G, Xf, 0.1, 0.001, vectorNull);
+		I = new Integration(G, Xf, 0.001, 0.001);
 		viewer.core().is_animating = true;
 		return true;
 	}
@@ -103,7 +120,6 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
 	if ((unsigned int)key == 'C') {
 		std::cout << "Change destination" << std::endl;
 		random_destination();
-
 		I->change_destination(Xf);
 		return true;
 	}
@@ -126,15 +142,22 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
 
 bool pre_draw(igl::opengl::glfw::Viewer& viewer) {
 	if (viewer.core().is_animating) {
-		I->performStep_gravity();
+		I->performStep(0.95);
 		viewer.data().clear();
 		view_box(viewer);
 		viewer.data().set_mesh(I->currentPosition(), F);
-		contact = I->check_box(box, amortissement);
+		contact = I->check_box(box, amortissement,epsilon);
+		if (contact && !previous_contact) {
+			random_destination();
+			I->change_destination(Xf);
+		}
+		previous_contact = contact;
+		/*
 		if (contact) {
 			random_destination();
 			I->change_destination(Xf);
 		}
+		*/
 	}
 	return false;
 }
@@ -145,7 +168,7 @@ int main(int argc, char* argv[]) {
 	// initialize input mesh
 
 	if (argc < 2) {
-		igl::readOFF("../../data/sphere.off", X0, F);
+		igl::readOFF("../../data/bunny.off", X0, F);
 	}
 	else {
 		igl::readOFF(argv[1], X0, F);

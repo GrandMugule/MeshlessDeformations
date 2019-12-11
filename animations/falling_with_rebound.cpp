@@ -29,8 +29,13 @@ MatrixXd G;
 // Integration scheme
 Integration* I;
 
-bool contact = false;
-bool previous_contact = false;
+//rebond
+double hauteur = 0.4;
+bool contact_g = false;
+bool previous_contact_g = false;
+bool contact_h = false;
+bool previous_contact_h = false;
+int etape = 0;
 
 bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier) {
 	/*
@@ -69,7 +74,7 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
 	if ((unsigned int)key == 'M') { //M comme Montée
 		std::cout << "Montée de l'objet selon l'axe choisi" << std::endl;
 		RowVector3d offset(0, 0, 0);
-		offset(axe) = 0.3;
+		offset(axe) = hauteur;
 		for (int i = 0; i < G.rows(); i++) {
 			G.row(i) += offset;
 		}
@@ -80,28 +85,47 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
 	if ((unsigned int)key == 'C') { //C comme Chute
 		std::cout << "Initialisation chute libre en direction de l'axe choisi" << std::endl;
 		sol = X0.colwise().minCoeff()(axe);
-		I = new Integration(G, X0, 0.1,0.05);
+		I = new Integration(G, X0, 0.1, 0.03);
 		viewer.core().is_animating = true;
 		return true;
 	}
 	return false;
 }
 
-
+void rebond() {
+	contact_g = I->check_ground(axe, sol);
+	if (contact_g && !previous_contact_g) {
+		MatrixXd Xf = X0;
+		hauteur = 0.5 * hauteur;
+		RowVector3d offset(0, 0, 0);
+		offset(axe) = hauteur;
+		for (int i = 0; i < G.rows(); i++) {
+			Xf.row(i) += offset;
+		}
+		I->change_destination(Xf);
+	}
+	if (contact_g) {
+		previous_contact_g = true;
+	}
+	else {
+		previous_contact_g = false;
+	}
+	contact_h = I->check_height(axe, hauteur);
+	if (contact_h && !previous_contact_h) {
+		I->change_destination(X0);
+	}
+	if (contact_h) {
+		previous_contact_h = true;
+	}
+	else {
+		previous_contact_h = false;
+	}
+}
 
 bool pre_draw(igl::opengl::glfw::Viewer& viewer) {
 	if (viewer.core().is_animating) {
 		I->performStep();
-		bool contact = I->check_ground(axe,sol);
-		if (contact && !previous_contact) {
-			I->change_destination(G);
-		}
-		if (contact) {
-			previous_contact = true;
-		}
-		else {
-			previous_contact = false;
-		}
+		rebond();
 		viewer.data().clear();
 		viewer.data().set_mesh(I->currentPosition(), F);
 	}
