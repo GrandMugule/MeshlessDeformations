@@ -1,5 +1,7 @@
 #include "shapematching.h"
 
+#include <cmath>
+
 using namespace std;
 using namespace Eigen;
 
@@ -83,6 +85,7 @@ void ShapeMatching::linearDeformation() {
     }
 
     MatrixXd A = Apq * Aqq.inverse();
+    A /= pow(A.determinant(), 1/3);
     MatrixXd S = (Apq.transpose() * Apq).sqrt();
     MatrixXd R = Apq * S.inverse();
     

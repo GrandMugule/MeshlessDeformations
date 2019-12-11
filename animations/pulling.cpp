@@ -30,9 +30,9 @@ int nClusters = 10;
 SpectralClustering* SC = nullptr;
 
 // the user can specify these parameters
-float alpha = 0.1;
+float alpha = 0.01;
 float beta = 0.5;
-float step = 0.1;
+float step = 1.;
 
 // elastic stretching
 MatrixXd X;
@@ -181,6 +181,7 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 	
         I = new Integration(X0, X, step, alpha);
 	I->addFeature(Feature::PLASTICITY);
+	I->addFeature(Feature::CLUSTERS);
 	I->setClusters(SC->getClusters());
 	I->computeDestination(beta);
 	cout << "Animation is running..." << endl;

@@ -3,6 +3,7 @@
 
 #include <iterator>
 #include <cassert>
+#include <cmath>
 
 using namespace std;
 using namespace Eigen;
@@ -63,6 +64,7 @@ void Integration::computeDestination(float beta){
 	    MatrixXd D1 = sm.getPureDeformation() - MatrixXd::Identity(3, 3);
 	    if (D1.norm() > c_yield){
 		S[i] = (MatrixXd::Identity(3, 3) + h * c_creep * D1) * S[i];
+		S[i] /= pow(S[i].determinant(), 1/3);
 	    }
 
 	    MatrixXd D2 = S[i] - MatrixXd::Identity(3, 3);
