@@ -35,6 +35,13 @@ void Integration::setClusters(vector<list<int> >& _clusters){
     clusters = _clusters;
 }
 
+
+void Integration::change_destination(MatrixXd& new_Xf) {
+	Xf = new_Xf;
+	ShapeMatching sm(X, Xf, 0.5, Deformation::QUADRATIC);
+	G = sm.getMatch();
+}
+
 /*
   Integration scheme.
 */
@@ -67,7 +74,7 @@ void Integration::perform_step_gravity(float lambda){
     V += alpha * (G - X) / h;
     
     for (int i = 0; i < V.rows(); i++) {
-	V.row(i) -= gravity * RowVector3d(0., 1., 0.);
+	V.row(i) -= h*gravity * RowVector3d(0., 1., 0.);
     }
     
     X += h * V;
@@ -104,19 +111,36 @@ void Integration::perform_step_clusters(float lambda){
   Other methods.
 */
 
-void Integration::check_ground(int axe, double sol) {
+bool Integration::check_ground(int axe, double sol) {
+	bool contact = false;
 	for (int i = 0; i < X.rows(); i++) {
 		if (X(i,axe) < sol) {
 			std::cout << "Touche le sol" << std::endl;
 			X(i,axe) = sol;
-			V(i,axe) = 0.05 * abs(V(i,axe));
+			V(i,axe) = 0.2 * abs(V(i,axe));
+			contact = true;
 		}
 	}
+	return contact;
 }
-
-bool Integration::check_box(std::map<string,double> box, double amortissement) {
+bool Integration::check_height(int axe, double hauteur) {
 	bool contact = false;
 	for (int i = 0; i < X.rows(); i++) {
+		if (X(i, axe) > hauteur) {
+			std::cout << "Touche le sol" << std::endl;
+			contact = true;
+		}
+	}
+	return contact;
+}
+
+bool Integration::check_box(std::map<string,double> box, double amortissement,double epsilon) {
+	bool contact = false;
+	
+	for (int i = 0; i < X.rows(); i++) {
+		if (X(i, 0) <= box["x_min"] + epsilon || X(i, 1) <= box["y_min"] + epsilon || X(i, 2) <= box["z_min"] + epsilon || X(i, 0) >= box["x_max"] - epsilon || X(i, 1) >= box["y_max"] - epsilon || X(i, 2) >= box["z_max"] - epsilon) {
+			contact = true;
+		}
 		if (X(i, 0) <= box["x_min"]) {
 			X(i, 0) = box["x_min"];
 			V(i,0) = - amortissement *V(i,0);

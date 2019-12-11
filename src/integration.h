@@ -26,9 +26,10 @@ class Integration {
     void performStep(float lambda = 0.9);
     MatrixXd& currentPosition(){ return X; }
     
-    void check_ground(int axe, double sol);
-    bool check_box(map<string, double> box, double amortissement);
-    void change_destination(MatrixXd& new_Xf) { Xf = new_Xf; }
+    bool check_ground(int axe, double sol);
+	bool check_height(int axe, double hauteur);
+    bool check_box(map<string, double> box, double amortissement, double epsilon);
+	void change_destination(MatrixXd& new_Xf);
 
  private:
     MatrixXd Xf;
