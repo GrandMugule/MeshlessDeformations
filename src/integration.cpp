@@ -85,15 +85,12 @@ void Integration::computeDestination(float beta){
 }
 
 
-<<<<<<< HEAD
 void Integration::change_destination(MatrixXd& new_Xf) {
 	Xf = new_Xf;
-	ShapeMatching sm(X, Xf, 0.5, Deformation::QUADRATIC);
-	G = sm.getMatch();
+	computeDestination();
 }
 
-=======
->>>>>>> aa646aa2749fb63f89383f739976e0f8bbf44915
+
 /*
   Integration scheme.
 */
@@ -146,13 +143,13 @@ void Integration::perform_step_clusters(){
   Other methods.
 */
 
-bool Integration::check_ground(int axe, double sol) {
+bool Integration::check_ground(int axe, double sol,double amortissement) {
 	bool contact = false;
 	for (int i = 0; i < X.rows(); i++) {
 		if (X(i,axe) < sol) {
 			std::cout << "Touche le sol" << std::endl;
 			X(i,axe) = sol;
-			V(i,axe) = 0.2 * abs(V(i,axe));
+			V(i,axe) = amortissement * abs(V(i,axe));
 			contact = true;
 		}
 	}
