@@ -1,17 +1,15 @@
 #include <igl/opengl/glfw/Viewer.h>
 #include <igl/readOFF.h>
 #include <igl/unproject_onto_mesh.h>
+
 #include <iostream>
-#include <list>
-#include <iterator>
+#include <string>
+#include <cassert>
 
 #include "shapematching.h"
 #include "integration.h"
 #include "adjacency.h"
 #include "clustering.h"
-
-#include <string>
-#include <cassert>
 
 using namespace std;
 using namespace Eigen;
@@ -21,27 +19,29 @@ using namespace Eigen;
   Global variables.
 */
 
-// Initial mesh
+// initial mesh
 MatrixXd X0;
 MatrixXi F;
 Adjacency* A = nullptr;
 MatrixXd C;
 
-// the user can specify these parameters
+// clustering is needed for plasticity
+int nClusters = 10;
 SpectralClustering* SC = nullptr;
-float alpha = 0.1;
-float beta = 0.5;
-float step = 0.1;
 
-// Elastic stretching
+// the user can specify these parameters
+float alpha = 0.01;
+float beta = 0.5;
+float step = 1.;
+
+// elastic stretching
 MatrixXd X;
 int axe = 0;
 int currentVertex;
 list<int> currentNeighborhood;
-MatrixXd G;
 
-// Integration scheme
-Integration* I = nullptr;
+// integration scheme
+Integration* I;
 
 
 /*
@@ -65,7 +65,7 @@ void init_data(int argc, char *argv[]){
     for (int i = 2; i < argc; i += 2) {
 	string s(argv[i]); string t(argv[i+1]);
 	if (s.compare("--clusters") == 0){
-	    SC = new SpectralClustering(X0, F, stoi(t));
+	    nClusters = stoi(t);
 	    continue;
 	}
 	if (s.compare("--alpha") == 0){
@@ -81,6 +81,9 @@ void init_data(int argc, char *argv[]){
 	    continue;
 	}
     }
+
+    // clusters
+    SC = new SpectralClustering(X0, F, nClusters);
 
     // set color
     C = MatrixXd(X0.rows(), 3);
@@ -100,7 +103,6 @@ void init_data(int argc, char *argv[]){
     }
 
     X = X0;
-    G = X0;
 }
 
 
@@ -117,13 +119,13 @@ bool mouse_down(igl::opengl::glfw::Viewer& viewer, int button, int modifier) {
     double x = viewer.current_mouse_x;
     double y = viewer.core().viewport(3) - viewer.current_mouse_y;
     Vector2f mouse_position(x, y);
-    if (igl::unproject_onto_mesh(mouse_position, viewer.core().view, viewer.core().proj, viewer.core().viewport, G, F, fid, bc)) {
+    if (igl::unproject_onto_mesh(mouse_position, viewer.core().view, viewer.core().proj, viewer.core().viewport, X0, F, fid, bc)) {
 	// find nearest vertex
         int bcid;
         bc.maxCoeff(&bcid);
         vid = F(fid, bcid);
         MatrixXd P(1, 3);
-        P.row(0) = G.row(vid);
+        P.row(0) = X0.row(vid);
 	
 	// update current vertex and neighborhood
 	currentVertex = vid;
@@ -154,7 +156,7 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 	return true;
     }
     if ((unsigned int)key == 6 || (unsigned int)key == 7) { //6 : touche fleche de droite, 7 : touche fleche de gauche
-	RowVector3d oldPoint = G.row(currentVertex);
+	RowVector3d oldPoint = X0.row(currentVertex);
 	RowVector3d newPoint = X.row(currentVertex);
 	if ((unsigned int)key == 6) { //fleche de droite
 	    newPoint(axe) += 0.1;
@@ -167,41 +169,29 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 	viewer.data().add_points(newPoint, RowVector3d(0, 1, 0));
 	viewer.data().add_points(oldPoint, RowVector3d(1, 0, 0));
 	viewer.data().add_edges(oldPoint, newPoint, Eigen::RowVector3d(0, 0, 1));
-	viewer.data().set_mesh(G, F);
-	viewer.data().set_colors(C);
-	return true;
-    }
-    if ((unsigned int)key == 32) { //touche espace
-        // update all vertices in neighborhood
-        RowVector3d delta = X.row(currentVertex) - G.row(currentVertex);
-        for (list<int>::iterator it = currentNeighborhood.begin(); it != currentNeighborhood.end(); ++it) {
-	    X.row(*it) += delta;
-	}
-	//update G
-        G = ShapeMatching(X0, X, beta, Deformation::QUADRATIC).getMatch();
-	viewer.data().clear();
-	viewer.data().set_mesh(G, F);
+	viewer.data().set_mesh(X0, F);
 	viewer.data().set_colors(C);
 	return true;
     }
     if ((unsigned int)key == 'D') {
-    if (SC == nullptr) {
-	I = new Integration(G, X0, step, alpha);
-    }
-    else {
-	I = new Integration(G, X0, step, alpha);
+	RowVector3d delta = X.row(currentVertex) - X0.row(currentVertex);
+	for (list<int>::iterator it = currentNeighborhood.begin(); it != currentNeighborhood.end(); ++it) {
+	    X.row(*it) += delta;
+	}
+	
+        I = new Integration(X0, X, step, alpha);
+	I->addFeature(Feature::PLASTICITY);
 	I->addFeature(Feature::CLUSTERS);
 	I->setClusters(SC->getClusters());
-    }
-    I->computeDestination(beta);
-    cout << "Animation is running..." << endl;
-    viewer.core().is_animating = true;
-    return true;
+	I->computeDestination(beta);
+	cout << "Animation is running..." << endl;
+	viewer.core().is_animating = true;
+	return true;
     }
     if ((unsigned int)key == 'S') {
 	std::cout << "Animation stopped" << std::endl;
-	G = I->currentPosition();
 	viewer.core().is_animating = false;
+	X0 = I->currentPosition();
 	return true;
     }
     return false;
@@ -231,7 +221,7 @@ int main(int argc, char *argv[]) {
     viewer.callback_mouse_down = &mouse_down;
     viewer.core().is_animating = false;
     viewer.callback_pre_draw = &pre_draw; // to perform animation steps
-    viewer.data().set_mesh(G, F); // load a face-based representation of the input 3d shape
+    viewer.data().set_mesh(X0, F); // load a face-based representation of the input 3d shape
     viewer.data().set_colors(C);
     viewer.launch(); // run the editor
 }
