@@ -1,0 +1,51 @@
+#include <igl/opengl/glfw/Viewer.h>
+#include <igl/readOFF.h>
+#include <igl/unproject_unto_mesh.h>
+
+#include <iostream>
+#include <string>
+#include <cassert>
+
+#include "shapematching.h"
+#include "integration.h"
+#include "adjacency.h"
+#include "clustering.h"
+
+using namespace std;
+using namespace Eigen;
+
+
+/*
+  Global variables.
+*/
+
+// initial mesh
+MatrixXd X0;
+MatrixXd F;
+Adjacency* A = nullptr;
+MatrixXd C;
+
+// clustering is needed for plasticity
+int nClusters = 10;
+SpectralClustering* SC = nullptr;
+
+// the user can specify these parameters
+float alpha = 0.1;
+float beta = 0.5;
+float step = 0.1;
+
+// elastic stretching
+MatrixXd X;
+int axe = 0;
+int currentVertex;
+list<int> currentNeighborhood;
+MatrixXd G;
+
+// integration scheme
+Integration* I;
+
+
+/*
+  Parse input command line to initialize global variables.
+*/
+
