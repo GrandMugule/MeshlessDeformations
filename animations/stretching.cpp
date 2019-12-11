@@ -61,6 +61,7 @@ void init_data(int argc, char *argv[]){
     double scale = (X0.colwise().maxCoeff() - X0.colwise().minCoeff()).norm();
     X0 *= 10 / scale;
 
+
     // parse input
     for (int i = 2; i < argc; i += 2) {
 	string s(argv[i]); string t(argv[i+1]);

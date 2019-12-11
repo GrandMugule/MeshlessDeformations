@@ -16,39 +16,101 @@
 //NOT FINISHED YET
 
 using namespace Eigen; // to use the classes provided by Eigen library
+/*
+  Global variables.
+*/
 
 // Initial mesh
 MatrixXd X0;
 MatrixXi F;
+MatrixXd C;
 
+// the user can specify these parameters
+SpectralClustering* SC = nullptr;
+float alpha = 0.0005;
+float beta = 0.5;
+float step = 0.001;
 
-// Elastic stretching
+// Elastic rebund shape
 MatrixXd X;
-int axe = 0;
-MatrixXd G;
 MatrixXd Xf;
 
 // Integration scheme
-Integration* I;
+Integration* I = nullptr;
 
 //Rebound
 bool contact = false;
 bool previous_contact = false;
 double amortissement = 0.9;
-double epsilon = 0.05;
+double epsilon = 0.01;
 map<string, double> box;
 RowVector3d PointXf;
 int face_destination = 0;
 int etape = 0;
 
+void init_data(int argc, char* argv[]) {
+	assert(argc > 1);
+
+	// input mesh and its adjacency graph
+	igl::readOFF(argv[1], X0, F);
+	cout << "Vertices : " << X0.rows() << endl;
+	cout << "Faces : " << F.rows() << endl << endl;
+
+	// rescale intput mesh
+	double scale = (X0.colwise().maxCoeff() - X0.colwise().minCoeff()).norm();
+	X0 *= 10 / scale;
+
+
+	// parse input
+	for (int i = 2; i < argc; i += 2) {
+		string s(argv[i]); string t(argv[i + 1]);
+		if (s.compare("--clusters") == 0) {
+			SC = new SpectralClustering(X0, F, stoi(t));
+			continue;
+		}
+		if (s.compare("--alpha") == 0) {
+			alpha = stof(t);
+			continue;
+		}
+		if (s.compare("--beta") == 0) {
+			beta = stof(t);
+			continue;
+		}
+		if (s.compare("--step") == 0) {
+			step = stof(t);
+			continue;
+		}
+	}
+
+	// set color
+	C = MatrixXd(X0.rows(), 3);
+	if (SC == nullptr) {
+		for (int i = 0; i < C.rows(); i++) {
+			C.row(i) << 1.0, 1.0, 0.0;
+		}
+	}
+	else {
+		for (vector<list<int> >::iterator c = SC->getClusters().begin(); c != SC->getClusters().end(); ++c) {
+			if (c->empty()) continue;
+			RowVector3d color = (RowVector3d::Random() + RowVector3d::Constant(1.)) / 2;
+			for (list<int>::iterator v = c->begin(); v != c->end(); ++v) {
+				C.row(*v) = color;
+			}
+		}
+	}
+
+	X = X0;
+}
+
+
 void random_destination() {
-	
+	/*
 	int random = rand() % 2 +1;
 	face_destination = (face_destination + random) % 3;
 	PointXf(face_destination)= 1.5* (rand() % 2) * (box["x_max"] -box["x_min"]) + box["x_min"];
 	PointXf((face_destination+1)%3) = (box["x_max"] + box["x_min"]) /2. ;
 	PointXf((face_destination + 2) % 3) = (box["x_max"] + box["x_min"]) /2.;
-	/*
+	*/
 	PointXf((face_destination + 1) % 3) = (box["x_max"] + box["x_min"]) / 2.;
 	PointXf((face_destination + 2) % 3) = (box["x_max"] + box["x_min"]) / 2.;
 	if (etape % 2 == 0) {
@@ -58,7 +120,7 @@ void random_destination() {
 		PointXf(face_destination) = 1.5 * box["x_min"];
 	}
 	etape += 1;
-	*/
+	
 	RowVector3d xfcm = Xf.colwise().mean();
 	MatrixXd Rotation(3, 3);
 	Rotation = Matrix3d::Zero();
@@ -112,7 +174,16 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
 
 	if ((unsigned int)key == 'D') {
 		std::cout << "Animation is running..." << std::endl;
-		I = new Integration(G, Xf, 0.001, 0.001);
+		if (SC == nullptr) {
+			I = new Integration(X, X0, step, alpha);
+		}
+		else {
+			I = new Integration(X, X0, step, alpha);
+			I->addFeature(Feature::PLASTICITY);
+			I->addFeature(Feature::CLUSTERS);
+			I->setClusters(SC->getClusters());
+		}
+		I->computeDestination(beta);
 		viewer.core().is_animating = true;
 		return true;
 	}
@@ -126,7 +197,7 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
 
 	if ((unsigned int)key == 'S') {
 		std::cout << "Fin integration" << std::endl;
-		G = I->currentPosition();
+		X = I->currentPosition();
 		viewer.core().is_animating = false;
 		return true;
 	}
@@ -145,13 +216,19 @@ bool pre_draw(igl::opengl::glfw::Viewer& viewer) {
 		I->performStep(0.95);
 		viewer.data().clear();
 		view_box(viewer);
+		I->computeDestination();
 		viewer.data().set_mesh(I->currentPosition(), F);
+		viewer.data().set_colors(C);
 		contact = I->check_box(box, amortissement,epsilon);
+		X = I->currentPosition();
+		
+
 		if (contact && !previous_contact) {
 			random_destination();
 			I->change_destination(Xf);
 		}
 		previous_contact = contact;
+
 		/*
 		if (contact) {
 			random_destination();
@@ -165,32 +242,18 @@ bool pre_draw(igl::opengl::glfw::Viewer& viewer) {
 
 
 int main(int argc, char* argv[]) {
-	// initialize input mesh
+	init_data(argc, argv);
 
-	if (argc < 2) {
-		igl::readOFF("../../data/bunny.off", X0, F);
-	}
-	else {
-		igl::readOFF(argv[1], X0, F);
-	}
-
-	//  print the number of mesh elements
-	std::cout << "Vertices: " << X0.rows() << std::endl;
-	std::cout << "Faces:    " << F.rows() << std::endl;
-	std::cout << std::endl;
-
-	// elastic stretching matrices
 	X = X0;
-	G = X0;
 	Xf = X0;
 
 	//def of the box
-	box["x_min"] = -1.;
-	box["x_max"] = 1.;
-	box["y_min"] = -1.;
-	box["y_max"] = 1.;
-	box["z_min"] = -1.;
-	box["z_max"] = 1.;
+	box["x_min"] = -10.;
+	box["x_max"] = 10.;
+	box["y_min"] = -10.;
+	box["y_max"] = 10.;
+	box["z_min"] = -10.;
+	box["z_max"] = 10.;
 
 
 
@@ -201,5 +264,6 @@ int main(int argc, char* argv[]) {
 	viewer.core().is_animating = false;
 	viewer.callback_pre_draw = &pre_draw; // to perform animation steps
 	viewer.data().set_mesh(X, F); // load a face-based representation of the input 3d shape
+	viewer.data().set_colors(C);
 	viewer.launch(); // run the editor
 }

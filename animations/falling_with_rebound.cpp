@@ -16,26 +16,85 @@ using namespace Eigen; // to use the classes provided by Eigen library
 // Initial mesh
 MatrixXd X0;
 MatrixXi F;
-Adjacency* A;
-SpectralClustering* SC;
 MatrixXd C;
 
-// Elastic stretching
+// Elastic falling
 MatrixXd X;
 int axe = 0;
-float sol = 0.;
-MatrixXd G;
+double sol = 0.;
+MatrixXd Xf;
+
+// the user can specify these parameters
+SpectralClustering* SC = nullptr;
+float alpha = 0.01;
+float beta = 0.5;
+float step = 0.001;
+double amortissement = 0.1;
 
 // Integration scheme
 Integration* I;
 
-//rebond
-double hauteur = 0.4;
-bool contact_g = false;
+//Rebound
+double hauteur = 10.;
+double hauteur_lancee = 0.;
 bool previous_contact_g = false;
-bool contact_h = false;
 bool previous_contact_h = false;
-int etape = 0;
+int n_rebound = 0;
+
+void init_data(int argc, char* argv[]) {
+	assert(argc > 1);
+
+	// input mesh and its adjacency graph
+	igl::readOFF(argv[1], X0, F);
+	cout << "Vertices : " << X0.rows() << endl;
+	cout << "Faces : " << F.rows() << endl << endl;
+
+	// rescale intput mesh
+	double scale = (X0.colwise().maxCoeff() - X0.colwise().minCoeff()).norm();
+	X0 *= 10 / scale;
+
+
+	// parse input
+	for (int i = 2; i < argc; i += 2) {
+		string s(argv[i]); string t(argv[i + 1]);
+		if (s.compare("--clusters") == 0) {
+			SC = new SpectralClustering(X0, F, stoi(t));
+			continue;
+		}
+		if (s.compare("--alpha") == 0) {
+			alpha = stof(t);
+			continue;
+		}
+		if (s.compare("--beta") == 0) {
+			beta = stof(t);
+			continue;
+		}
+		if (s.compare("--step") == 0) {
+			step = stof(t);
+			continue;
+		}
+	}
+
+	// set color
+	C = MatrixXd(X0.rows(), 3);
+	if (SC == nullptr) {
+		for (int i = 0; i < C.rows(); i++) {
+			C.row(i) << 1.0, 1.0, 0.0;
+		}
+	}
+	else {
+		for (vector<list<int> >::iterator c = SC->getClusters().begin(); c != SC->getClusters().end(); ++c) {
+			if (c->empty()) continue;
+			RowVector3d color = (RowVector3d::Random() + RowVector3d::Constant(1.)) / 2;
+			for (list<int>::iterator v = c->begin(); v != c->end(); ++v) {
+				C.row(*v) = color;
+			}
+		}
+	}
+
+	X = X0;
+	Xf = X0;
+}
 
 bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier) {
 	/*
@@ -67,60 +126,135 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
 
 	if ((unsigned int)key == 'S') {
 		std::cout << "Fin integration" << std::endl;
-		G = I->currentPosition();
+		X =X0;
 		viewer.core().is_animating = false;
+		viewer.data().clear();
+		viewer.data().set_mesh(X, F);
+		viewer.data().set_colors(C);
+		hauteur = 10.;
 		return true;
 	}
 	if ((unsigned int)key == 'M') { //M comme Montée
 		std::cout << "Montée de l'objet selon l'axe choisi" << std::endl;
 		RowVector3d offset(0, 0, 0);
 		offset(axe) = hauteur;
-		for (int i = 0; i < G.rows(); i++) {
-			G.row(i) += offset;
+		hauteur_lancee += hauteur;
+		for (int i = 0; i < X.rows(); i++) {
+			X.row(i) += offset;
 		}
 		viewer.data().clear();
-		viewer.data().set_mesh(G, F);
+		viewer.data().set_mesh(X, F);
+		viewer.data().set_colors(C);
 		return true;
 	}
 	if ((unsigned int)key == 'C') { //C comme Chute
 		std::cout << "Initialisation chute libre en direction de l'axe choisi" << std::endl;
 		sol = X0.colwise().minCoeff()(axe);
-		I = new Integration(G, X0, 0.1, 0.03);
+		if (SC == nullptr) {
+			I = new Integration(X, X0, step, alpha);
+		}
+		else {
+			I = new Integration(X, X0, step, alpha);
+			I->addFeature(Feature::PLASTICITY);
+			I->addFeature(Feature::CLUSTERS);
+			I->setClusters(SC->getClusters());
+		}
+		I->computeDestination(beta);
 		viewer.core().is_animating = true;
 		return true;
+	}
+	if ((unsigned int)key == 9) { //fleche du haut : la forme rebondit vers le haut
+		hauteur_lancee = 0.8 * hauteur_lancee;
+		RowVector3d offset(0, 0, 0);
+		offset(axe) = hauteur_lancee;
+		offset((axe + 1) % 3) = hauteur_lancee;
+
+		MatrixXd Rotation(3, 3);
+		Rotation = Matrix3d::Zero();
+		Rotation((axe + 2) % 3, (axe + 2) % 3) = 1.;
+		Rotation((axe + 1) % 3, (axe) % 3) = 1.;
+		Rotation((axe) % 3, (axe + 1) % 3) = -1.;
+		RowVector3d xfcm = Xf.colwise().mean();
+		for (int i = 0; i < Xf.rows(); i++) {
+			Xf.row(i) -= xfcm;
+			Xf.row(i) = Xf.row(i) * Rotation.transpose();
+			Xf.row(i) += xfcm + offset;
+		}
+		I->change_destination(Xf);
+	}
+	if ((unsigned int)key == 8) { //fleche du bas
+		RowVector3d offset(0, 0, 0);
+		offset(axe) = -hauteur_lancee;
+		offset((axe + 1) % 3) = hauteur_lancee;
+
+		MatrixXd Rotation(3, 3);
+		Rotation = Matrix3d::Zero();
+		Rotation((axe + 2) % 3, (axe + 2) % 3) = 1.;
+		Rotation((axe + 1) % 3, (axe) % 3) = 1.;
+		Rotation((axe) % 3, (axe + 1) % 3) = -1.;
+		RowVector3d xfcm = Xf.colwise().mean();
+		for (int i = 0; i < Xf.rows(); i++) {
+			Xf.row(i) -= xfcm;
+			Xf.row(i) = Xf.row(i) * Rotation.transpose();
+			Xf.row(i) += xfcm + offset;
+		}
+		I->change_destination(Xf);
 	}
 	return false;
 }
 
+
 void rebond() {
-	contact_g = I->check_ground(axe, sol);
-	if (contact_g && !previous_contact_g) {
-		MatrixXd Xf = X0;
-		hauteur = 0.5 * hauteur;
+	bool contact_g = I->check_ground(axe, sol,amortissement);
+	/*
+	if (contact_g && !previous_contact_g){
+		n_rebound += 1;
+		std::cout << "Premier contact sol" << std::endl;
+		hauteur_lancee = 0.8 * hauteur_lancee;
 		RowVector3d offset(0, 0, 0);
-		offset(axe) = hauteur;
-		for (int i = 0; i < G.rows(); i++) {
-			Xf.row(i) += offset;
+		offset(axe) = hauteur_lancee;
+		offset((axe + 1) % 3) = hauteur_lancee;
+
+		MatrixXd Rotation(3, 3);
+		Rotation = Matrix3d::Zero();
+		Rotation((axe+2) % 3, (axe+2)%3) = 1.;
+		Rotation((axe + 1) % 3, (axe) % 3) = 1.;
+		Rotation((axe) % 3, (axe+1) % 3) = -1.;
+		RowVector3d xfcm = Xf.colwise().mean();
+		for (int i = 0; i < Xf.rows(); i++) {
+			Xf.row(i) -= xfcm;
+			Xf.row(i) = Xf.row(i) * Rotation.transpose();
+			Xf.row(i) += xfcm+offset;
+		}
+		I->change_destination(Xf);
+		
+	}
+	previous_contact_g = contact_g;
+	
+	//Cas arrivee en haut, on verifie selon la distance dans l'axe (axe+1)
+	bool contact_h = I->check_height((axe+1)%3, hauteur_lancee);
+	if (contact_h && !previous_contact_h) {
+		RowVector3d offset(0, 0, 0);
+		offset(axe) = -hauteur_lancee;
+		offset((axe + 1) % 3) =  hauteur_lancee;
+
+		MatrixXd Rotation(3, 3);
+		Rotation = Matrix3d::Zero();
+		Rotation((axe + 2) % 3, (axe + 2) % 3) = 1.;
+		Rotation((axe + 1) % 3, (axe) % 3) = 1.;
+		Rotation((axe) % 3, (axe + 1) % 3) = -1.;
+		RowVector3d xfcm = Xf.colwise().mean();
+		for (int i = 0; i < Xf.rows(); i++) {
+			Xf.row(i) -= xfcm;
+			Xf.row(i) = Xf.row(i) * Rotation.transpose();
+			Xf.row(i) += xfcm + offset;
 		}
 		I->change_destination(Xf);
 	}
-	if (contact_g) {
-		previous_contact_g = true;
-	}
-	else {
-		previous_contact_g = false;
-	}
-	contact_h = I->check_height(axe, hauteur);
-	if (contact_h && !previous_contact_h) {
-		I->change_destination(X0);
-	}
-	if (contact_h) {
-		previous_contact_h = true;
-	}
-	else {
-		previous_contact_h = false;
-	}
+	previous_contact_h = contact_h;
+	*/
 }
+
 
 bool pre_draw(igl::opengl::glfw::Viewer& viewer) {
 	if (viewer.core().is_animating) {
@@ -128,6 +262,7 @@ bool pre_draw(igl::opengl::glfw::Viewer& viewer) {
 		rebond();
 		viewer.data().clear();
 		viewer.data().set_mesh(I->currentPosition(), F);
+		viewer.data().set_colors(C);
 	}
 	return false;
 }
@@ -135,44 +270,16 @@ bool pre_draw(igl::opengl::glfw::Viewer& viewer) {
 
 
 int main(int argc, char* argv[]) {
-	// initialize input mesh
-	if (argc < 2) {
-		igl::readOFF("../../data/bunny.off", X0, F);
-	}
-	else {
-		igl::readOFF(argv[1], X0, F);
-	}
-
-	//  print the number of mesh elements
-	std::cout << "Vertices: " << X0.rows() << std::endl;
-	std::cout << "Faces:    " << F.rows() << std::endl;
-
-	// initialize adjacency graph
-	A = new Adjacency(F, X0.rows());
-
-	// perform clustering on initial shape and give a different colour to each cluster
-	std::cout << "Performing spectral clustering on input mesh..." << std::endl;
-	SC = new SpectralClustering(X0, F, 10);
-	std::cout << "Done" << std::endl;
-	std::cout << std::endl;
-
-	C = MatrixXd(X0.rows(), 3);
-	for (vector<list<int> >::iterator c = SC->getClusters().begin(); c != SC->getClusters().end(); ++c) {
-		RowVector3d color = (RowVector3d::Random() + RowVector3d::Constant(1.)) / 2;
-		for (list<int>::iterator v = c->begin(); v != c->end(); ++v) {
-			C.row(*v) = color;
-		}
-	}
-
-	// elastic stretching matrices
-	X = X0;
-	G = X0;
+	init_data(argc, argv);
 
 	// initialize viewer
 	igl::opengl::glfw::Viewer viewer; // create the 3d viewer
 	viewer.callback_key_down = &key_down; // for dealing with keyboard events
 	viewer.core().is_animating = false;
 	viewer.callback_pre_draw = &pre_draw; // to perform animation steps
-	viewer.data().set_mesh(G, F); // load a face-based representation of the input 3d shape
+	viewer.data().set_mesh(X, F); // load a face-based representation of the input 3d shape
+	viewer.data().set_colors(C);
 	viewer.launch(); // run the editor
 }
+
+
