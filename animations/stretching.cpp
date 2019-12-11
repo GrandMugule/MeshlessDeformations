@@ -190,9 +190,11 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 	I = new Integration(G, X0, step, alpha);
     }
     else {
-	I = new Integration(G, X0, step, alpha, Feature::CLUSTERS);
+	I = new Integration(G, X0, step, alpha);
+	I->addFeature(Feature::CLUSTERS);
 	I->setClusters(SC->getClusters());
     }
+    I->computeDestination();
     cout << "Animation is running..." << endl;
     viewer.core().is_animating = true;
     return true;

@@ -10,18 +10,20 @@ using namespace std;
 using namespace Eigen;
 
 enum class Feature {
-    NONE,
     GRAVITY,
-    CLUSTERS
+    CLUSTERS,
+    PLASTICITY
 };
 
 class Integration {
  public:
-    Integration(MatrixXd& _Xi, MatrixXd& _Xf, float _h, float _alpha, Feature _method = Feature::NONE);
+    Integration(MatrixXd& _Xi, MatrixXd& _Xf, float _h, float _alpha);
     ~Integration(){}
 
+    void addFeature(Feature f);
     void setGravity(float g);
     void setClusters(vector<list<int> >& _clusters);
+    void computeDestination(float beta = 0.5);
 
     void performStep(float lambda = 0.9);
     MatrixXd& currentPosition(){ return X; }
@@ -34,7 +36,12 @@ class Integration {
     MatrixXd Xf;
     float h;
     float alpha;
-    Feature method;
+    map<Feature, bool> features;
+    
+    vector<MatrixXd> S;
+    float c_yield = 0.5;
+    float c_creep = 0.5;
+    float c_max = 0.5;
 
     MatrixXd X;
     MatrixXd V;
@@ -43,7 +50,6 @@ class Integration {
     float gravity;
     vector<list<int> > clusters;
 
-    void perform_step(float lambda);
-    void perform_step_gravity(float lambda);
-    void perform_step_clusters(float lambda);
+    void perform_step_gravity();
+    void perform_step_clusters();
 };
