@@ -24,6 +24,7 @@ class Integration {
     void setGravity(float g);
     void setClusters(vector<list<int> >& _clusters);
     void computeDestination(float beta = 0.5);
+	void change_matching(MatrixXd _G);
 
     void performStep(float lambda = 0.9);
     MatrixXd& currentPosition(){ return X; }

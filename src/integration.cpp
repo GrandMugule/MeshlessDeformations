@@ -90,6 +90,10 @@ void Integration::change_destination(MatrixXd& new_Xf) {
 	computeDestination();
 }
 
+void Integration::change_matching(MatrixXd _G) {
+	G = _G;
+}
+
 
 /*
   Integration scheme.
@@ -147,7 +151,6 @@ bool Integration::check_ground(int axe, double sol,double amortissement) {
 	bool contact = false;
 	for (int i = 0; i < X.rows(); i++) {
 		if (X(i,axe) < sol) {
-			std::cout << "Touche le sol" << std::endl;
 			X(i,axe) = sol;
 			V(i,axe) = amortissement * abs(V(i,axe));
 			contact = true;
@@ -157,11 +160,9 @@ bool Integration::check_ground(int axe, double sol,double amortissement) {
 }
 bool Integration::check_height(int axe, double hauteur) {
 	bool contact = false;
-	for (int i = 0; i < X.rows(); i++) {
-		if (X(i, axe) > hauteur) {
-			std::cout << "Touche le sol" << std::endl;
-			contact = true;
-		}
+	RowVector3d xcm = X.colwise().mean();
+	if (xcm(axe) > hauteur) {
+		contact = true;
 	}
 	return contact;
 }
