@@ -1,7 +1,6 @@
 # MeshlessDeformations
 Deformation algorithms for animations based on shape matching
 
-Le projet contient quatre fichiers executables correspondant chacun à une animation
 
 ## Structure
 Le projet contient un dossier animations avec quatre fichiers executables correspondant chacun à une animation : stretching, pulling, falling et falling_with_rebound.
