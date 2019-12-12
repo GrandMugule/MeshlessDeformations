@@ -29,17 +29,19 @@ SpectralClustering* SC = nullptr;
 float alpha = 0.01;
 float beta = 0.5;
 float step = 0.001;
-double amortissement = 0.1;
+double amortissement = 0.;
 
 // Integration scheme
 Integration* I;
 
 //Rebound
-double hauteur = 10.;
+double hauteur = 15.;
 double hauteur_lancee = 0.;
 bool previous_contact_g = false;
 bool previous_contact_h = false;
 int n_rebound = 0;
+
+double gravity = 10.;
 
 void init_data(int argc, char* argv[]) {
 	assert(argc > 1);
@@ -156,6 +158,8 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
 		else {
 			I = new Integration(X, X0, step, alpha);
 			I->addFeature(Feature::PLASTICITY);
+			I->addFeature(Feature::GRAVITY);
+			I->setGravity(gravity);
 			I->addFeature(Feature::CLUSTERS);
 			I->setClusters(SC->getClusters());
 		}
@@ -163,58 +167,23 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
 		viewer.core().is_animating = true;
 		return true;
 	}
-	if ((unsigned int)key == 9) { //fleche du haut : la forme rebondit vers le haut
-		hauteur_lancee = 0.8 * hauteur_lancee;
-		RowVector3d offset(0, 0, 0);
-		offset(axe) = hauteur_lancee;
-		offset((axe + 1) % 3) = hauteur_lancee;
-
-		MatrixXd Rotation(3, 3);
-		Rotation = Matrix3d::Zero();
-		Rotation((axe + 2) % 3, (axe + 2) % 3) = 1.;
-		Rotation((axe + 1) % 3, (axe) % 3) = 1.;
-		Rotation((axe) % 3, (axe + 1) % 3) = -1.;
-		RowVector3d xfcm = Xf.colwise().mean();
-		for (int i = 0; i < Xf.rows(); i++) {
-			Xf.row(i) -= xfcm;
-			Xf.row(i) = Xf.row(i) * Rotation.transpose();
-			Xf.row(i) += xfcm + offset;
-		}
-		I->change_destination(Xf);
-	}
-	if ((unsigned int)key == 8) { //fleche du bas
-		RowVector3d offset(0, 0, 0);
-		offset(axe) = -hauteur_lancee;
-		offset((axe + 1) % 3) = hauteur_lancee;
-
-		MatrixXd Rotation(3, 3);
-		Rotation = Matrix3d::Zero();
-		Rotation((axe + 2) % 3, (axe + 2) % 3) = 1.;
-		Rotation((axe + 1) % 3, (axe) % 3) = 1.;
-		Rotation((axe) % 3, (axe + 1) % 3) = -1.;
-		RowVector3d xfcm = Xf.colwise().mean();
-		for (int i = 0; i < Xf.rows(); i++) {
-			Xf.row(i) -= xfcm;
-			Xf.row(i) = Xf.row(i) * Rotation.transpose();
-			Xf.row(i) += xfcm + offset;
-		}
-		I->change_destination(Xf);
-	}
+	
 	return false;
 }
 
 
 void rebond() {
 	bool contact_g = I->check_ground(axe, sol,amortissement);
-	/*
+	
 	if (contact_g && !previous_contact_g){
 		n_rebound += 1;
 		std::cout << "Premier contact sol" << std::endl;
 		hauteur_lancee = 0.8 * hauteur_lancee;
 		RowVector3d offset(0, 0, 0);
 		offset(axe) = hauteur_lancee;
+		/*
 		offset((axe + 1) % 3) = hauteur_lancee;
-
+		
 		MatrixXd Rotation(3, 3);
 		Rotation = Matrix3d::Zero();
 		Rotation((axe+2) % 3, (axe+2)%3) = 1.;
@@ -226,14 +195,22 @@ void rebond() {
 			Xf.row(i) = Xf.row(i) * Rotation.transpose();
 			Xf.row(i) += xfcm+offset;
 		}
+		*/
+
+		Xf = X0;
+		for (int i = 0; i < Xf.rows(); i++) {
+			Xf.row(i) += offset;
+		}
 		I->change_destination(Xf);
-		
+		I->change_matching(Xf);
 	}
 	previous_contact_g = contact_g;
 	
 	//Cas arrivee en haut, on verifie selon la distance dans l'axe (axe+1)
-	bool contact_h = I->check_height((axe+1)%3, hauteur_lancee);
+	bool contact_h = I->check_height(axe, hauteur_lancee);
 	if (contact_h && !previous_contact_h) {
+		std::cout << "Arrivee en haut" << std::endl;
+		/*
 		RowVector3d offset(0, 0, 0);
 		offset(axe) = -hauteur_lancee;
 		offset((axe + 1) % 3) =  hauteur_lancee;
@@ -249,10 +226,13 @@ void rebond() {
 			Xf.row(i) = Xf.row(i) * Rotation.transpose();
 			Xf.row(i) += xfcm + offset;
 		}
+		*/
+		Xf = X0;
 		I->change_destination(Xf);
+		I->change_matching(Xf);
 	}
 	previous_contact_h = contact_h;
-	*/
+	
 }
 
 
