@@ -28,11 +28,15 @@ MatrixXd G;
 SpectralClustering* SC = nullptr;
 float alpha = 0.005;
 float beta = 0.5;
-float step = 0.001;
-double amortissement = 0.1;
+float step = 0.1;
+double amortissement = 0.05;
 
 // Integration scheme
 Integration* I;
+
+//gravity 
+double gravity = 10.;
+int compteur = 0;
 
 void init_data(int argc, char* argv[]) {
 	assert(argc > 1);
@@ -144,6 +148,9 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
 		else {
 			I = new Integration(X, X0, step, alpha);
 			I->addFeature(Feature::PLASTICITY);
+			I->addFeature(Feature::GRAVITY);
+			I->setGravity(gravity);
+			
 			I->addFeature(Feature::CLUSTERS);
 			I->setClusters(SC->getClusters());
 		}
@@ -164,7 +171,12 @@ bool pre_draw(igl::opengl::glfw::Viewer& viewer) {
 		if (contact) {
 			I->computeDestination();
 		}
+		
+		if (compteur % 24 == 0) {
+			I->computeDestination();
+		}
 		*/
+		compteur += 1;
 		viewer.data().clear();
 		viewer.data().set_mesh(I->currentPosition(), F);
 		viewer.data().set_colors(C);
