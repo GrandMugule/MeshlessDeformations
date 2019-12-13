@@ -21,7 +21,7 @@ class Integration {
     ~Integration(){}
 
     void addFeature(Feature f);
-    void setGravity(float g);
+    void setGravity(int _axe, float g);
     void setClusters(vector<list<int> >& _clusters);
     void computeDestination(float beta = 0.5);
 	void change_matching(MatrixXd _G);
@@ -50,6 +50,7 @@ class Integration {
     MatrixXd G;
 
     float gravity;
+	int axe;
     vector<list<int> > clusters;
 
     void perform_step_gravity();

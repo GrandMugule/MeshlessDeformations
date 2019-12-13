@@ -30,9 +30,9 @@ void Integration::addFeature(Feature f){
     features[f] = true;
 }
 
-void Integration::setGravity(float g){
+void Integration::setGravity(int _axe, float g){
     assert(features[Feature::GRAVITY]);
-    
+	axe = _axe;
     gravity = g;
 }
 
@@ -115,8 +115,10 @@ void Integration::performStep(float lambda){
 }
 
 void Integration::perform_step_gravity(){
+	RowVector3d G(0., 0., 0.);
+	G(axe) = - gravity;
     for (int i = 0; i < V.rows(); i++) {
-	V.row(i) -= h*gravity * RowVector3d(0., 1., 0.);
+	V.row(i) += h *G ;
     }
 }
 
