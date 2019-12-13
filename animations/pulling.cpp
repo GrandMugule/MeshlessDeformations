@@ -129,7 +129,7 @@ bool mouse_down(igl::opengl::glfw::Viewer& viewer, int button, int modifier) {
 	
 	// update current vertex and neighborhood
 	currentVertex = vid;
-	currentNeighborhood = A->getNeighborhood(currentVertex);
+	currentNeighborhood = A->getNeighborhood(currentVertex, 1);
 
 	// add a red dot on the viewer
         viewer.data().add_points(P, RowVector3d(1, 0, 0));
