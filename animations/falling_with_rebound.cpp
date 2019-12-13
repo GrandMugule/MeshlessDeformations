@@ -75,6 +75,7 @@ void init_data(int argc, char* argv[]) {
 			step = stof(t);
 			continue;
 		}
+
 	}
 
 	// set color
