@@ -32,6 +32,7 @@ SpectralClustering* SC = nullptr;
 float alpha = 0.1;
 float beta = 0.5;
 float step = 0.1;
+Deformation deformation = Deformation::QUADRATIC;
 
 // Elastic stretching
 MatrixXd X;
@@ -79,6 +80,12 @@ void init_data(int argc, char *argv[]){
 	}
 	if (s.compare("--step") == 0){
 	    step = stof(t);
+	    continue;
+	}
+	if (s.compare("--deformation") == 0){
+	    if (t.compare("r") == 0) deformation = Deformation::RIGID;
+	    else if (t.compare("l") == 0) deformation = Deformation::LINEAR;
+	    else if (t.compare("q") == 0) deformation = Deformation::QUADRATIC;
 	    continue;
 	}
     }
@@ -179,7 +186,8 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 	    X.row(*it) += delta;
 	}
 	//update G
-        G = ShapeMatching(X0, X, beta, Deformation::QUADRATIC).getMatch();
+        ShapeMatching sm = (deformation == Deformation::RIGID) ? ShapeMatching(X0, X) : ShapeMatching(X0, X, beta, deformation);
+	G = sm.getMatch();
 	viewer.data().clear();
 	viewer.data().set_mesh(G, F);
 	viewer.data().set_colors(C);
@@ -194,7 +202,7 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 	I->addFeature(Feature::CLUSTERS);
 	I->setClusters(SC->getClusters());
     }
-    I->computeDestination(beta);
+    I->change_matching(X0);
     cout << "Animation is running..." << endl;
     viewer.core().is_animating = true;
     return true;

@@ -33,6 +33,10 @@ SpectralClustering* SC = nullptr;
 float alpha = 0.01;
 float beta = 0.5;
 float step = 1.;
+float c_yield = 0.5;
+float c_creep = 0.5;
+float c_max = 0.5;
+Deformation deformation = Deformation::QUADRATIC;
 
 // elastic stretching
 MatrixXd X;
@@ -78,6 +82,24 @@ void init_data(int argc, char *argv[]){
 	}
 	if (s.compare("--step") == 0){
 	    step = stof(t);
+	    continue;
+	}
+	if (s.compare("--c_yield") == 0){
+	    c_yield = stof(t);
+	    continue;
+	}
+	if (s.compare("--c_creep") == 0){
+	    c_creep = stof(t);
+	    continue;
+	}
+	if (s.compare("--c_max") == 0){
+	    c_max = stof(t);
+	    continue;
+	}
+	if (s.compare("--deformation") == 0){
+	    if (t.compare("r") == 0) deformation = Deformation::RIGID;
+	    else if (t.compare("l") == 0) deformation = Deformation::LINEAR;
+	    else if (t.compare("q") == 0) deformation = Deformation::QUADRATIC;
 	    continue;
 	}
     }
@@ -129,7 +151,7 @@ bool mouse_down(igl::opengl::glfw::Viewer& viewer, int button, int modifier) {
 	
 	// update current vertex and neighborhood
 	currentVertex = vid;
-	currentNeighborhood = A->getNeighborhood(currentVertex);
+	currentNeighborhood = A->getNeighborhood(currentVertex, 1);
 
 	// add a red dot on the viewer
         viewer.data().add_points(P, RowVector3d(1, 0, 0));
@@ -181,9 +203,10 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 	
         I = new Integration(X0, X, step, alpha);
 	I->addFeature(Feature::PLASTICITY);
+	I->setPlasticityCoeffs(c_yield, c_creep, c_max);
 	I->addFeature(Feature::CLUSTERS);
 	I->setClusters(SC->getClusters());
-	I->computeDestination(beta);
+	I->computeDestination(beta, deformation);
 	cout << "Animation is running..." << endl;
 	viewer.core().is_animating = true;
 	return true;
