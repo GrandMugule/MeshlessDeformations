@@ -16,6 +16,7 @@ Exemple de ligne de commande :
 
     ./stretching ../data/bunny.off --alpha 0.1 --beta 0.5 --step 0.01 --clusters 5 --deformation l
 
+Pour l'animation falling, l'utilisateur peut également régler l'amortissement lors de l'atterrissage avec --amortissement valeur_amortissement ainsi que rajouter un effet de gravité avec --gravity valeur_de_gravite et un effet de plasticite avec --plasticity periode_de_matching
 
 ## Animations
 
@@ -38,5 +39,6 @@ Exemple de ligne de commande :
 * Appuyer sur x, y ou z (w sur un clavier azerty) pour choisir l'axe de la chute
 * Appuyer sur m (virgule pour les claviers azerty) pour faire monter la forme
 * Appuyer sur c pour déclencher la chute
-
+* Appuyer sur p pour mettre l'animation en pause
+* Appuyer sur s pour réinitialiser l'animation
 
