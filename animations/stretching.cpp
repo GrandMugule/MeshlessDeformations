@@ -202,7 +202,7 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier
 	I->addFeature(Feature::CLUSTERS);
 	I->setClusters(SC->getClusters());
     }
-    I->computeDestination(beta);
+    I->change_matching(X0);
     cout << "Animation is running..." << endl;
     viewer.core().is_animating = true;
     return true;
