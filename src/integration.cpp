@@ -1,5 +1,4 @@
 #include "integration.h"
-#include "shapematching.h"
 
 #include <iterator>
 #include <cassert>
@@ -46,7 +45,13 @@ void Integration::setClusters(vector<list<int> >& _clusters){
     }
 }
 
-void Integration::computeDestination(float beta){
+void Integration::setPlasticityCoeffs(float _c_yield, float _c_creep, float _c_max){
+    c_yield = _c_yield;
+    c_creep = _c_creep;
+    c_max = _c_max;
+}
+
+void Integration::computeDestination(float beta, Deformation deformation){
     if (features[Feature::PLASTICITY]){
 	MatrixXd Xp = X;
 	for (int i = 0; i < clusters.size(); i++) {
@@ -75,11 +80,11 @@ void Integration::computeDestination(float beta){
 		}
 	    }
 	}
-	ShapeMatching sm(Xp, Xf, beta, Deformation::QUADRATIC);
+	ShapeMatching sm(Xp, Xf, beta, deformation);
 	G = sm.getMatch();
     }
     else {
-	ShapeMatching sm(X, Xf, beta, Deformation::QUADRATIC);
+	ShapeMatching sm(X, Xf, beta, deformation);
 	G = sm.getMatch();
     }
 }

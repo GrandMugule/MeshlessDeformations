@@ -1,5 +1,7 @@
 #pragma once
 
+#include "shapematching.h"
+
 #include <Eigen/Core>
 
 #include <vector>
@@ -23,16 +25,17 @@ class Integration {
     void addFeature(Feature f);
     void setGravity(float g);
     void setClusters(vector<list<int> >& _clusters);
-    void computeDestination(float beta = 0.5);
-	void change_matching(MatrixXd _G);
+    void setPlasticityCoeffs(float _c_yield, float _c_creep, float _c_max);
+    void computeDestination(float beta = 0.5, Deformation deformation = Deformation::QUADRATIC);
+    void change_destination(MatrixXd& new_Xf);
+    void change_matching(MatrixXd _G);
 
     void performStep(float lambda = 0.9);
     MatrixXd& currentPosition(){ return X; }
     
     bool check_ground(int axe, double sol, double amortissement);
-	bool check_height(int axe, double hauteur);
+    bool check_height(int axe, double hauteur);
     bool check_box(map<string, double> box, double amortissement, double epsilon);
-	void change_destination(MatrixXd& new_Xf);
 
  private:
     MatrixXd Xf;
