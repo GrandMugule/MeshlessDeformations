@@ -30,19 +30,23 @@ float alpha = 0.005;
 float beta = 0.5;
 float step = 0.1;
 double amortissement = 0.05;
+Deformation deformation = Deformation::QUADRATIC;
 
 // Integration scheme
 Integration* I;
 
 //gravity 
 bool Gravity = false;
-double gravity = 10.;
+double gravity = 1.;
 
 
 //plasticity
 bool plasticity = false;
 int periode = 24; //periode à laquelle on réactualise le shapematching
 int compteur = 0;
+float c_yield = 0.5;
+float c_creep = 0.5;
+float c_max = 0.5;
 
 void init_data(int argc, char* argv[]) {
 	assert(argc > 1);
@@ -72,6 +76,10 @@ void init_data(int argc, char* argv[]) {
 			beta = stof(t);
 			continue;
 		}
+		if (s.compare("--amortissement") == 0) {
+			amortissement = stof(t);
+			continue;
+		}
 		if (s.compare("--step") == 0) {
 			step = stof(t);
 			continue;
@@ -84,6 +92,24 @@ void init_data(int argc, char* argv[]) {
 		if (s.compare("--plasticity") == 0) {
 			periode = stof(t);
 			plasticity = true;
+			continue;
+		}
+		if (s.compare("--c_yield") == 0) {
+			c_yield = stof(t);
+			continue;
+		}
+		if (s.compare("--c_creep") == 0) {
+			c_creep = stof(t);
+			continue;
+		}
+		if (s.compare("--c_max") == 0) {
+			c_max = stof(t);
+			continue;
+		}
+		if (s.compare("--deformation") == 0) {
+			if (t.compare("r") == 0) deformation = Deformation::RIGID;
+			else if (t.compare("l") == 0) deformation = Deformation::LINEAR;
+			else if (t.compare("q") == 0) deformation = Deformation::QUADRATIC;
 			continue;
 		}
 	}
@@ -136,17 +162,27 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
 		return true;
 	}
 
+	if ((unsigned int)key == 'P') {
+		std::cout << "Fin integration" << std::endl;
+		X = I->currentPosition();
+		viewer.data().set_mesh(X, F);
+		viewer.data().set_colors(C);
+		viewer.core().is_animating = false;
+		return true;
+	}
 
 	if ((unsigned int)key == 'S') {
 		std::cout << "Fin integration" << std::endl;
-		X = I->currentPosition();
+		X = X0;
+		viewer.data().set_mesh(X, F);
+		viewer.data().set_colors(C);
 		viewer.core().is_animating = false;
 		return true;
 	}
 	if ((unsigned int)key == 'M') { //M comme Montée
 		std::cout << "Montée de l'objet selon l'axe choisi" << std::endl;
 		RowVector3d offset(0, 0, 0);
-		offset(axe) = 2.;
+		offset(axe) = 5.;
 		for (int i = 0; i < G.rows(); i++) {
 			X.row(i) += offset;
 		}
@@ -163,18 +199,23 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
 			I = new Integration(X, X0, step, alpha);
 		}
 		else {
+			std::cout << "Initialisation clusters" << std::endl;
 			I = new Integration(X, X0, step, alpha);
+			if (plasticity) {
+				I->addFeature(Feature::PLASTICITY);
+				I->setPlasticityCoeffs(c_yield, c_creep, c_max);
+			}
 			I->addFeature(Feature::CLUSTERS);
 			I->setClusters(SC->getClusters());
+			I->computeDestination(beta, deformation);
+
 		}
 		if (Gravity) {
 			I->addFeature(Feature::GRAVITY);
-			I->setGravity(gravity);
+			I->setGravity(axe,gravity);
 		}
-		if (plasticity) {
-			I->addFeature(Feature::PLASTICITY);
-		}
-		I->computeDestination(beta);
+
+		I->computeDestination(beta,deformation);
 		viewer.core().is_animating = true;
 		return true;
 	}
@@ -190,7 +231,7 @@ bool pre_draw(igl::opengl::glfw::Viewer& viewer) {
 		bool contact = I->check_ground(axe,sol,amortissement);		
 		//Actualisation du matching si on a la plasticite
 		if (plasticity && compteur % periode == 0) {
-			I->computeDestination();
+			I->computeDestination(beta, deformation);
 		}
 		compteur += 1;
 		viewer.data().clear();
