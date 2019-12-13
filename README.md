@@ -20,7 +20,7 @@ Pour l'animation falling, l'utilisateur peut également régler l'amortissement 
 
 ## Animations
 
-### Stretching
+### Stretching (Etirement elastique)
 * Cliquer sur un point de la forme
 * Appuyer sur x, y ou z (w sur un clavier azerty) pour sélectionner l'axe dans lequel on veut déplacer le point
 * Appuyer sur les touches flèches de gauche ou flèche de droite pour déplacer le point
@@ -28,14 +28,14 @@ Pour l'animation falling, l'utilisateur peut également régler l'amortissement 
 * Appuyer sur d pour lancer l'animation
 * Appuyer sur s pour arrêter l'animation
 
-### Pulling
+### Pulling (Etirement plastique)
 * Cliquer sur un point de la forme
 * Appuyer sur x, y ou z (w sur un clavier azerty) pour sélectionner l'axe dans lequel on veut déplacer le point
 * Appuyer sur les touches flèches de gauche ou flèche de droite pour déplacer le point
 * Appuyer sur d pour lancer l'animation
 * Appuyer sur s pour arrêter l'animation
 
-### Falling et falling with rebound
+### Falling et falling with rebound (Chute et rebonds)
 * Appuyer sur x, y ou z (w sur un clavier azerty) pour choisir l'axe de la chute
 * Appuyer sur m (virgule pour les claviers azerty) pour faire monter la forme
 * Appuyer sur c pour déclencher la chute
