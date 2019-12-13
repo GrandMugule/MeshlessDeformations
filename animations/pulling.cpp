@@ -162,17 +162,17 @@ bool mouse_down(igl::opengl::glfw::Viewer& viewer, int button, int modifier) {
 
 bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int modifier) {
     std::cout << "pressed Key: " << key << " " << (unsigned int)key << std::endl;
-    if (key == '1') {
+    if (key == 'X') {
 	axe = 0;
 	cout << "modification axe : " << key << " " << (unsigned int)key << endl;
 	return true;
     }
-    if (key == '2') {
+    if (key == 'Y') {
 	axe = 1;
 	cout << "modification axe : " << key << " " << (unsigned int)key << endl;
         return true;
     }
-    if (key == '3') {
+    if (key == 'Z') {
 	axe = 2;
 	cout << "modification axe : " << key << " " << (unsigned int)key << endl;
 	return true;
