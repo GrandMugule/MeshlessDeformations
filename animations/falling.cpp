@@ -35,7 +35,13 @@ double amortissement = 0.05;
 Integration* I;
 
 //gravity 
+bool Gravity = false;
 double gravity = 10.;
+
+
+//plasticity
+bool plasticity = false;
+int periode = 24; //periode à laquelle on réactualise le shapematching
 int compteur = 0;
 
 void init_data(int argc, char* argv[]) {
@@ -68,6 +74,16 @@ void init_data(int argc, char* argv[]) {
 		}
 		if (s.compare("--step") == 0) {
 			step = stof(t);
+			continue;
+		}
+		if (s.compare("--gravity") == 0) {
+			gravity = stof(t);
+			Gravity = true;
+			continue;
+		}
+		if (s.compare("--plasticity") == 0) {
+			periode = stof(t);
+			plasticity = true;
 			continue;
 		}
 	}
@@ -140,6 +156,7 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
 		return true;
 	}
 	if ((unsigned int)key == 'C') { //C comme Chute
+		//Initialisation de I en fonction des paramètres
 		std::cout << "Initialisation chute libre en direction de l'axe choisi" << std::endl;
 		sol = X0.colwise().minCoeff()(axe);
 		if (SC == nullptr) {
@@ -147,12 +164,15 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
 		}
 		else {
 			I = new Integration(X, X0, step, alpha);
-			I->addFeature(Feature::PLASTICITY);
-			I->addFeature(Feature::GRAVITY);
-			I->setGravity(gravity);
-			
 			I->addFeature(Feature::CLUSTERS);
 			I->setClusters(SC->getClusters());
+		}
+		if (Gravity) {
+			I->addFeature(Feature::GRAVITY);
+			I->setGravity(gravity);
+		}
+		if (plasticity) {
+			I->addFeature(Feature::PLASTICITY);
 		}
 		I->computeDestination(beta);
 		viewer.core().is_animating = true;
@@ -166,16 +186,12 @@ bool key_down(igl::opengl::glfw::Viewer& viewer, unsigned char key, int modifier
 bool pre_draw(igl::opengl::glfw::Viewer& viewer) {
 	if (viewer.core().is_animating) {
 		I->performStep();
-		bool contact = I->check_ground(axe,sol,amortissement);
-		/*
-		if (contact) {
+		//Gestion du contact avec le sol
+		bool contact = I->check_ground(axe,sol,amortissement);		
+		//Actualisation du matching si on a la plasticite
+		if (plasticity && compteur % periode == 0) {
 			I->computeDestination();
 		}
-		
-		if (compteur % 24 == 0) {
-			I->computeDestination();
-		}
-		*/
 		compteur += 1;
 		viewer.data().clear();
 		viewer.data().set_mesh(I->currentPosition(), F);
